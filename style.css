@@ -1,0 +1,413 @@
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #161513;
+  color: #c5c5c5;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Header and Navigation */
+header {
+  background-color: #222;
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.logo img {
+  width: 80px;
+}
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+}
+.navbar div {
+  padding: 30px 20px;
+}
+.navbar a {
+  color: #fff;
+}
+
+.language-switcher {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.language-switcher button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: color 0.3s;
+}
+
+.language-switcher button:hover {
+  color: #ff8660; /* Accent color on hover */
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 20px;
+}
+
+/* Avatar */
+.avatar img {
+  width: 100%;
+  max-width: 251px;
+  border-radius: 50%;
+}
+
+/* About Section */
+.about {
+  text-align: center;
+}
+.about-text {
+  width: 100%;
+  max-width: 652px;
+  margin: 30px auto;
+}
+.about-text h1 {
+  font-size: 55px;
+  line-height: 1;
+  color: #fff;
+}
+.about-text h1 > span {
+  background: var(
+    --Primary-Gradient,
+    linear-gradient(116deg, #ff8660 50%, #9a33ff 95.51%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.about-text p {
+  font-size: 18px;
+  margin-top: 30px;
+}
+.gradient-text {
+  background: var(
+    --Primary-Gradient,
+    linear-gradient(116deg, #ff8660 50%, #9a33ff 95.51%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.about-btn {
+  margin-top: 30px;
+}
+.btn-primary,
+.btn-secondary {
+  width: 195px;
+  height: 64px;
+  border-radius: 50px;
+  font-size: 22px;
+  margin-right: 20px;
+  padding: 10px;
+  transition: background 0.3s, color 0.3s;
+}
+.btn-primary {
+  border: 1px solid var(--Primary-Color, #fff);
+  background: linear-gradient(
+      0deg,
+      var(--Primary-Color, #fff) 0%,
+      var(--Primary-Color, #fff) 100%
+    ),
+    var(--Primary-Color, #fff);
+}
+.btn-secondary {
+  background: none;
+  border: 2px solid #fff;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: transparent;
+  color: var(--Primary-Color, #fff);
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: #fff;
+  color: #161513;
+  cursor: pointer;
+}
+.orange-gradient {
+  background: linear-gradient(180deg, #ff8660 0%, #d5491d 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Experience Section */
+.experience-with {
+  text-align: center;
+}
+.experience-with h2 {
+  font-size: 20px;
+}
+.experience-with-lang {
+  display: flex;
+  width: 100%;
+  max-width: 500px;
+  margin: 50px auto;
+  justify-content: space-between;
+}
+.experience-with-lang img {
+  width: 42px;
+  cursor: pointer;
+}
+
+/* Headings */
+.primary-heading {
+  text-align: center;
+  font-size: 35px;
+}
+
+/* Projects Section */
+.projects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 40px 0;
+}
+
+.project-item {
+  position: relative;
+  background: #2a2a2a;
+  margin: 20px;
+  border-radius: 18px;
+  overflow: hidden; /* ensures the overlay and image follow the rounded corners */
+  flex: 1 1 calc(50% - 40px);
+  max-width: calc(50% - 40px);
+  text-decoration: none;
+}
+
+.project-item img {
+  width: 100%;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0px 25px;
+  padding-top: 25px;
+  padding-bottom: 20px;
+  background: #2a2a2a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.project-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.link-icon {
+  font-size: 20px;
+}
+
+/* Experience Details */
+.heading-experience {
+  background: var(
+    --Blue-Gradient,
+    linear-gradient(180deg, #5badff 0%, #1373d1 100%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.experience-item {
+  padding: 30px 0;
+  margin-bottom: 20px;
+}
+.experience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.experience-left {
+  display: flex;
+  align-items: center;
+}
+.company-logo {
+  width: 40px;
+  height: auto;
+  margin-right: 10px;
+  border-radius: 50px;
+}
+.experience-info {
+  display: flex;
+  flex-direction: column;
+}
+.date {
+  color: #c5c5c5;
+  font-size: 0.9em;
+}
+.experience-title {
+  color: #fff;
+  font-size: 22px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+/* CONTACT SECTION */
+#contact {
+  margin-top: 60px;
+}
+
+.primary-heading {
+  font-size: 35px;
+  margin-bottom: 20px;
+  color: #fff; /* Adjust as needed */
+}
+
+.contact-description {
+  max-width: 800px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+  color: #c5c5c5;
+}
+
+.contact-email {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.email-icon {
+  font-size: 1.2rem;
+  color: #fff; /* or your preferred color */
+  margin-right: 10px;
+}
+
+.email-link {
+  font-size: 1rem;
+  color: #c5c5c5;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.email-link:hover {
+  color: #fff;
+}
+
+/* Social Links */
+.social-links {
+  display: flex;
+  align-items: center;
+}
+
+.social-links a {
+  color: #fff; /* icon color */
+  font-size: 1.5rem;
+  margin-right: 20px;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.social-links a:hover {
+  color: #fff; /* icon hover color */
+}
+
+/* Responsive Styles */
+@media (max-width: 930px) {
+  nav {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  /* Adjust language switcher */
+  .language-switcher {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .language-switcher button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .navbar div {
+    padding: 10px;
+  }
+
+  .container {
+    padding: 40px 10px;
+  }
+
+  .about-text h1 {
+    font-size: 40px;
+  }
+
+  .about-text p {
+    font-size: 16px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 160px;
+    height: 50px;
+    font-size: 18px;
+  }
+
+  .projects {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .project-item {
+    flex: 1 1 100%;
+    max-width: 100%;
+    margin: 10px 0;
+  }
+
+  .experience-title {
+    font-size: 18px;
+  }
+
+  /* For experience items and date text */
+  .experience-title-container .date,
+  .date {
+    font-size: 14px;
+  }
+
+  .primary-heading {
+    font-size: 28px;
+  }
+}

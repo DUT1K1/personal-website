@@ -1,0 +1,36 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VS Code settings
+.vscode/
+
+# Node (if you ever use npm for tooling)
+node_modules/
+npm-debug.log*
+
+# Logs
+*.log
+
+# Optional: Environment files (if any)
+.env
+.env.*
+
+# Thumbnails
+._*
+
+# Trash files
+.Trashes
+Icon?
+
+# Spotlight files
+.Spotlight-V100
+
+# Files that might appear during file transfer or metadata storage
+*.swp
+*.swo
+
+# Compiled output (if ever generated)
+dist/
+build/
