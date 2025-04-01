@@ -129,13 +129,9 @@ nav {
   transition: background 0.3s, color 0.3s;
 }
 .btn-primary {
-  border: 1px solid var(--Primary-Color, #fff);
-  background: linear-gradient(
-      0deg,
-      var(--Primary-Color, #fff) 0%,
-      var(--Primary-Color, #fff) 100%
-    ),
-    var(--Primary-Color, #fff);
+  border: 2px solid #fff;
+  color: #161513;
+  background: #fff;
 }
 .btn-secondary {
   background: none;
