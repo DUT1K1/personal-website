@@ -188,18 +188,6 @@ nav {
   text-align: left;
 }
 
-.academic-list {
-  list-style-type: disc;
-  padding-left: 40px;
-  margin-top: 20px;
-  color: #c5c5c5;
-}
-
-.academic-list li {
-  margin-bottom: 10px;
-  font-size: 18px;
-}
-
 /* Projects Section */
 .projects {
   display: flex;
