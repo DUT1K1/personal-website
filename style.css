@@ -180,6 +180,26 @@ nav {
   font-size: 35px;
 }
 
+.sub-heading {
+  font-size: 26px;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  color: #fff;
+  text-align: left;
+}
+
+.academic-list {
+  list-style-type: disc;
+  padding-left: 40px;
+  margin-top: 20px;
+  color: #c5c5c5;
+}
+
+.academic-list li {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
 /* Projects Section */
 .projects {
   display: flex;
@@ -272,6 +292,40 @@ nav {
   font-weight: bold;
   margin-left: 10px;
 }
+
+.academic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* space between items */
+  margin-top: 20px;
+}
+
+.academic-item {
+  background: #2a2a2a;
+  padding: 15px 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.academic-item .role {
+  font-weight: bold;
+  font-size: 18px;
+  color: #ff8660; /* accent color */
+}
+
+.academic-item .event {
+  font-size: 16px;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.academic-item .location {
+  font-size: 14px;
+  color: #c5c5c5;
+}
+
 
 /* CONTACT SECTION */
 #contact {
@@ -405,5 +459,12 @@ nav {
 
   .primary-heading {
     font-size: 28px;
+  }
+
+  .sub-heading {
+    font-size: 22px;
+  }
+  .academic-list li {
+    font-size: 16px;
   }
 }
