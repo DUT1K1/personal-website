@@ -23,21 +23,43 @@
           <button onclick="setLanguage('ge')">ქართული</button> -->
         </div>
 
-        <div class="navbar">
-          <div><a href="#about">About</a></div>
-          <div><a href="#projects">Projects</a></div>
+        <input
+          type="checkbox"
+          id="nav-toggle"
+          class="nav-toggle"
+          aria-hidden="true"
+          tabindex="-1"
+        />
+        <label
+          class="menu-toggle"
+          for="nav-toggle"
+          role="button"
+          aria-label="Toggle navigation"
+          aria-controls="primary-nav"
+          aria-expanded="false"
+        >
+          <i class="fa-solid fa-bars icon-open" aria-hidden="true"></i>
+          <i class="fa-solid fa-xmark icon-close" aria-hidden="true"></i>
+        </label>
+
+        <div class="navbar" id="primary-nav">
+          <div><a href="#about" class="nav-link">About</a></div>
+          <div><a href="#now" class="nav-link">Now</a></div>
+          <div><a href="#skills" class="nav-link">Skills</a></div>
+          <div><a href="#projects" class="nav-link">Projects</a></div>
           <div>
-            <a href="#experience">Experience</a>
+            <a href="#experience" class="nav-link">Experience</a>
           </div>
           <div>
-            <a href="#education">Education</a>
+            <a href="#education" class="nav-link">Education</a>
           </div>
-          <div><a href="#academic">Academic Experience</a></div>
-          <div><a href="#contact">Contact</a></div>
+          <div><a href="#academic" class="nav-link">Academic Experience</a></div>
+          <div><a href="#contact" class="nav-link">Contact</a></div>
           <div>
             <a
               href="https://opalescent-hub-1c1.notion.site/13fe260c066180d79b4dc85eb505f47f"
               target="_blank"
+              class="nav-link"
               >Blog</a
             >
           </div>
@@ -45,34 +67,35 @@
       </nav>
     </header>
 
-    <!-- Home Section -->
-    <section id="home" class="container">
-      <div class="about">
-        <div class="avatar">
-          <img src="resources/images/prof-pic.png" alt="Avatar" />
-        </div>
-        <div class="about-text">
-          <h1>Hi, I'm <span>Davit Maisuradze</span></h1>
-          <p>
-            I'm a student at Kutaisi International University with hands on
-            experience with Java development.
-          </p>
-        </div>
+    <main id="scroll-container">
+      <!-- Home Section -->
+      <section id="home" class="container reveal">
+        <div class="about">
+          <div class="avatar">
+            <img src="resources/images/prof-pic.png" alt="Avatar" />
+          </div>
+          <div class="about-text">
+            <h1>Hi, I'm <span>Davit Maisuradze</span></h1>
+            <p>
+              I'm a student at Kutaisi International University with hands on
+              experience with Java development.
+            </p>
+          </div>
 
-        <div class="about-btn">
-          <a href="#contact" class="btn-primary">Get In Touch</a>
-          <a
-            href="resources/files/David Maisuradze Resume.docx.pdf"
-            download
-            class="btn-secondary"
-            >Download Resume</a
-          >
+          <div class="about-btn">
+            <a href="#contact" class="btn-primary">Get In Touch</a>
+            <a
+              href="resources/files/David Maisuradze Resume.docx.pdf"
+              download
+              class="btn-secondary"
+              >Download Resume</a
+            >
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
     <!-- About Section -->
-    <section id="about" class="container">
+    <section id="about" class="container reveal">
       <div class="about">
         <div class="about-text">
           <h1>About Me</h1>
@@ -104,7 +127,102 @@
       </div>
     </section>
 
-    <section id="projects" class="container">
+    <section id="now" class="container reveal">
+      <h1 class="primary-heading">Now</h1>
+      <div class="now-card">
+        <p>
+          Currently deepening my cloud architecture skills through a Python
+          bootcamp. Additionally I am finishing up my Bachelors thesis about
+          derivatives or regular languages and expressions.
+        </p>
+        <p class="now-meta">Last updated: January 2026</p>
+      </div>
+    </section>
+
+    <section id="skills" class="container reveal">
+      <h1 class="primary-heading">Skills</h1>
+      <div class="skills-rows">
+        <div class="skills-row">
+          <div class="skills-label">Java Development</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>Java SE/EE</span></span>
+            <span class="skill-chip"><span>Spring Framework</span></span>
+            <span class="skill-chip"><span>Spring Boot</span></span>
+            <span class="skill-chip"><span>Spring Security</span></span>
+            <span class="skill-chip"><span>Maven</span></span>
+            <span class="skill-chip"><span>JUnit</span></span>
+            <span class="skill-chip"><span>Mockito</span></span>
+            <span class="skill-chip"><span>REST</span></span>
+            <span class="skill-chip"><span>Microservices</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Python Development</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>Core Python</span></span>
+            <span class="skill-chip"><span>FastAPI</span></span>
+            <span class="skill-chip"><span>Pandas</span></span>
+            <span class="skill-chip"><span>NumPy</span></span>
+            <span class="skill-chip"><span>Pytest</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Web Development</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>HTML</span></span>
+            <span class="skill-chip"><span>CSS</span></span>
+            <span class="skill-chip"><span>JavaScript</span></span>
+            <span class="skill-chip"><span>React</span></span>
+            <span class="skill-chip"><span>Thymeleaf</span></span>
+            <span class="skill-chip"><span>HTTP</span></span>
+            <span class="skill-chip"><span>Tomcat</span></span>
+            <span class="skill-chip"><span>JSON</span></span>
+            <span class="skill-chip"><span>XML</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Cloud Computing</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>AWS</span></span>
+            <span class="skill-chip"><span>EC2</span></span>
+            <span class="skill-chip"><span>ECS</span></span>
+            <span class="skill-chip"><span>S3</span></span>
+            <span class="skill-chip"><span>Lambda</span></span>
+            <span class="skill-chip"><span>IAM</span></span>
+            <span class="skill-chip"><span>VPC</span></span>
+            <span class="skill-chip"><span>ALB</span></span>
+            <span class="skill-chip"><span>Serverless</span></span>
+            <span class="skill-chip"><span>AWS Syndicate</span></span>
+            <span class="skill-chip"><span>Docker</span></span>
+            <span class="skill-chip"><span>Containerization</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Version Control</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>Git</span></span>
+            <span class="skill-chip"><span>GitHub</span></span>
+            <span class="skill-chip"><span>GitLab</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Database Management</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>MySQL</span></span>
+            <span class="skill-chip"><span>PostgreSQL</span></span>
+            <span class="skill-chip"><span>MongoDB</span></span>
+            <span class="skill-chip"><span>DynamoDB</span></span>
+            <span class="skill-chip"><span>JDBC</span></span>
+            <span class="skill-chip"><span>JPA</span></span>
+            <span class="skill-chip"><span>Hibernate</span></span>
+            <span class="skill-chip"><span>Flyway</span></span>
+            <span class="skill-chip"><span>Alembic</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="container reveal">
       <h1 class="primary-heading">
         <span class="orange-gradient">My Projects</span>
       </h1>
@@ -116,7 +234,11 @@
           rel="noopener noreferrer"
           class="project-item"
         >
-          <img src="resources/images/gym.png" alt="GymManagement Application" />
+          <img
+            src="resources/images/gym.png"
+            alt="GymManagement Application"
+            loading="lazy"
+          />
           <div class="overlay">
             <span class="project-title">GymManagement Application</span>
             <span class="link-icon"
@@ -135,6 +257,7 @@
           <img
             src="resources/images/university-app.png"
             alt="University Management System"
+            loading="lazy"
           />
           <div class="overlay">
             <span class="project-title">University Management System</span>
@@ -151,7 +274,11 @@
           rel="noopener noreferrer"
           class="project-item"
         >
-          <img src="resources/images/todo-app.png" alt="ToDo Rest API" />
+          <img
+            src="resources/images/todo-app.png"
+            alt="ToDo Rest API"
+            loading="lazy"
+          />
           <div class="overlay">
             <span class="project-title">ToDo Rest API</span>
             <span class="link-icon"
@@ -170,6 +297,7 @@
           <img
             src="resources/images/weather-app.png"
             alt="RESTful Weather API"
+            loading="lazy"
           />
           <div class="overlay">
             <span class="project-title">RESTful Weather API</span>
@@ -182,9 +310,8 @@
     </section>
 
     <!-- Experience Section -->
-    <section id="experience" class="container">
+    <section id="experience" class="container reveal">
       <h1 class="primary-heading heading-experience">Experience</h1>
-
 
       <!-- Python cloud architect bootcamp in Quantori -->
       <div class="experience-item">
@@ -194,6 +321,7 @@
               src="resources/images/quantori_logo.jpeg"
               alt="Quantori Logo"
               class="company-logo"
+              loading="lazy"
             />
             <span class="experience-title"
               >Python Cloud Architect Bootcamp (Remote)</span
@@ -214,6 +342,7 @@
               src="resources/images/mziuri.jpg"
               alt="MZIURI logo"
               class="company-logo"
+              loading="lazy"
             />
             <span class="experience-title"
               >Java Teacher at MZIURI (Remote)</span
@@ -236,6 +365,7 @@
               src="resources/images/epam-logo.jpeg"
               alt="EPAM Systems logo"
               class="company-logo"
+              loading="lazy"
             />
             <span class="experience-title"
               >Junior Java Developer at EPAM Systems (Remote)</span
@@ -257,6 +387,7 @@
               src="resources/images/epam-logo.jpeg"
               alt="EPAM Systems logo"
               class="company-logo"
+              loading="lazy"
             />
             <span class="experience-title"
               >Java Backend Intern at EPAM Systems (Remote)</span
@@ -273,33 +404,34 @@
     </section>
 
     <!-- Education Section -->
-    <section id="education" class="container">
+    <section id="education" class="container reveal">
       <h1 class="primary-heading heading-experience">Education</h1>
 
       <!-- Bachelor of Computer Science -->
       <div class="experience-item">
-        <div class="experience-header">
-          <div class="experience-left">
-            <img
-              src="resources/images/kiu.jpeg"
-              alt="Kutaisi International University logo"
-              class="company-logo"
-            />
-            <span class="experience-title">Bachelor of Computer Science</span>
+          <div class="experience-header">
+            <div class="experience-left">
+              <img
+                src="resources/images/kiu.jpeg"
+                alt="Kutaisi International University logo"
+                class="company-logo"
+                loading="lazy"
+              />
+              <span class="experience-title">Bachelor of Computer Science</span>
+            </div>
+            <div class="date">Sept 2022 – Jul 2026</div>
           </div>
-          <div class="date">Sept 2022 – Jul 2026</div>
-        </div>
-        <p>
-          Pursuing a degree in Computer Science at Kutaisi International
-          University in Georgia, building a strong foundation in software
-          development, algorithms, and emerging technologies.
-        </p>
+          <p>
+            Pursuing a degree in Computer Science at Kutaisi International
+            University in Georgia, building a strong foundation in software
+            development, algorithms, and emerging technologies.
+          </p>
       </div>
 
       <!-- Add additional education items here if needed -->
     </section>
 
-    <section id="academic" class="container">
+    <section id="academic" class="container reveal">
       <h1 class="primary-heading heading-experience">Academic Experience</h1>
 
       <!-- Research Experience -->
@@ -311,6 +443,7 @@
               src="resources/images/kiu.jpeg"
               alt="Kutaisi International University logo"
               class="company-logo"
+              loading="lazy"
             />
             <span class="experience-title">Bachelor Thesis: Derivatives of Regular Expressions with Fuzzy Similarity</span>
           </div>
@@ -360,7 +493,7 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="container">
+    <section id="contact" class="container reveal">
       <h1 class="primary-heading">Contact</h1>
       <p class="contact-description">Feel free to reach out!</p>
 
@@ -377,6 +510,7 @@
           href="https://www.linkedin.com/in/david-maisuradze2004/"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="LinkedIn profile"
         >
           <i class="fa-brands fa-linkedin"></i>
         </a>
@@ -385,6 +519,7 @@
           href="https://github.com/DUT1K1"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="GitHub profile"
         >
           <i class="fa-brands fa-github"></i>
         </a>
@@ -393,12 +528,15 @@
           href="https://opalescent-hub-1c1.notion.site/13fe260c066180d79b4dc85eb505f47f"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Java course on Notion"
         >
           <i class="fa-brands fa-java"></i>
         </a>
       </div>
     </section>
+    </main>
 
+    <script src="resources/vendor/smooth-scrollbar.js"></script>
     <script src="scripts.js"></script>
   </body>
 </html>
