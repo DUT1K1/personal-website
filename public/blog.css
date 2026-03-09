@@ -635,6 +635,18 @@
   font-size: 0.9em;
 }
 
+.blog-post-content .katex {
+  color: #fff5ee;
+  font-size: 1.02em;
+}
+
+.blog-post-content .katex-display {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2em 0;
+}
+
 .blog-post-content pre {
   overflow-x: auto;
   border-radius: 20px;
