@@ -16,7 +16,7 @@ Starting a new engineering role always resets your standards a bit. You quickly 
 
 ## What changes in a new environment
 
-At Quantori, the biggest early reminder for me has been that clean software is not only about code style. It is about making behavior obvious: naming things well, validating inputs strictly, and leaving enough structure that the next engineer can move fast without guessing.
+At Quantori the biggest early reminder for me has been that clean software is not only about code style. It is about making behavior obvious: naming things well, validating inputs strictly, and leaving enough structure that the next engineer can move fast without guessing.
 
 I also like how Python changes the shape of backend work. The language is compact, but that does not mean the design should be loose. If anything, it pushes me to be more explicit about contracts, tests, and operational behavior because small files can still hide big complexity.
 
