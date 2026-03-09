@@ -10,7 +10,7 @@ tags:
   - startup
   - backend
 featured: true
-draft: false
+draft: true
 ---
 
 Building the backend for Gakvetili.ge has been one of the most practical learning environments I have had. A real product does not let you hide behind toy architecture or vague plans. Every decision eventually shows up as user friction, delivery delay, or operational pain.

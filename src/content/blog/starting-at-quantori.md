@@ -9,7 +9,7 @@ tags:
   - quantori
   - career
 featured: true
-draft: false
+draft: true
 ---
 
 Starting a new engineering role always resets your standards a bit. You quickly see which habits are solid and which ones only looked solid inside familiar projects.
