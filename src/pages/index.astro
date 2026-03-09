@@ -1,0 +1,606 @@
+---
+const base = import.meta.env.BASE_URL;
+const withBase = (path = "") => `${base}${path}`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Davit Maisuradze</title>
+    <link rel="stylesheet" href={withBase("style.css")} />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="icon" href={withBase("resources/images/tab-icon.png")} type="image/png" />
+  </head>
+  <body>
+    <!-- Header / Navigation -->
+    <header>
+      <nav>
+        <div class="language-switcher">
+          <!-- <button onclick="setLanguage('en')">English</button>
+          <button onclick="setLanguage('ge')">ქართული</button> -->
+        </div>
+
+        <input
+          type="checkbox"
+          id="nav-toggle"
+          class="nav-toggle"
+          aria-hidden="true"
+          tabindex="-1"
+        />
+        <label
+          class="menu-toggle"
+          for="nav-toggle"
+          role="button"
+          aria-label="Toggle navigation"
+          aria-controls="primary-nav"
+          aria-expanded="false"
+        >
+          <i class="fa-solid fa-bars icon-open" aria-hidden="true"></i>
+          <i class="fa-solid fa-xmark icon-close" aria-hidden="true"></i>
+        </label>
+
+        <div class="navbar" id="primary-nav">
+          <div><a href="#about" class="nav-link">About</a></div>
+          <div><a href="#now" class="nav-link">Now</a></div>
+          <div><a href="#skills" class="nav-link">Skills</a></div>
+          <div><a href="#projects" class="nav-link">Projects</a></div>
+          <div>
+            <a href="#experience" class="nav-link">Experience</a>
+          </div>
+          <div>
+            <a href="#education" class="nav-link">Education</a>
+          </div>
+          <div><a href="#academic" class="nav-link">Academic Experience</a></div>
+          <div><a href="#contact" class="nav-link">Contact</a></div>
+          <div>
+            <a
+              href={withBase("blog/")}
+              class="nav-link"
+              >Blog</a
+            >
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="scroll-container">
+      <!-- Home Section -->
+      <section id="home" class="container reveal">
+        <div class="about">
+          <div class="avatar">
+            <img src={withBase("resources/images/prof-pic.png")} alt="Avatar" />
+          </div>
+          <div class="about-text">
+            <h1>Hi, I'm <span>Davit Maisuradze</span></h1>
+            <p>
+              I'm the CTO and Tech Lead at Gakvetili.ge, and I also work as a
+              Python Software Developer at Quantori.
+            </p>
+          </div>
+
+          <div class="about-btn">
+            <a href="#contact" class="btn-primary">Get In Touch</a>
+            <a
+              href={withBase("resources/files/David Maisuradze Resume.docx.pdf")}
+              download
+              class="btn-secondary"
+              >Download Resume</a
+            >
+          </div>
+        </div>
+      </section>
+
+    <!-- About Section -->
+    <section id="about" class="container reveal">
+      <div class="about">
+        <div class="about-text">
+          <h1>About Me</h1>
+          <p>
+            Hello, I'm David Maisuradze, a passionate
+            <span class="gradient-text">Java Developer</span> based in Tbilisi,
+            Georgia. I specialize in building scalable applications using Spring
+            and <span class="gradient-text">Spring Boot</span>, with a strong
+            focus on crafting robust RESTful APIs and microservices
+            architectures. My expertise in Hibernate and AWS integration has
+            enabled me to deliver full-stack projects and develop secure,
+            <span class="gradient-text">high-performance</span> software
+            solutions.
+          </p>
+          <p>
+            My professional journey includes mentoring young talents as a
+            <span class="gradient-text">Java Teacher</span>, where I help
+            students build their programming skills through hands-on projects. I
+            have also contributed as a Junior Java Developer at
+            <span class="gradient-text">EPAM Systems</span>, where I built
+            serverless applications and honed my skills during an internship
+            developing scalable
+            <span class="gradient-text">backend</span> systems. My
+            projects—ranging from a gym management application to a
+            comprehensive university management system—demonstrate my commitment
+            to innovation and excellence in the tech industry.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="now" class="container reveal">
+      <h1 class="primary-heading">Now</h1>
+      <div class="now-card">
+        <p>
+          I'm currently working at Quantori as a Python Software Developer. At
+          the same time, I'm building the Gakvetili.ge backend with Java and
+          Spring Boot, and learning a lot through the project. I'm also on the
+          final steps of my bachelor's thesis, which should be ready in the next
+          one or two months.
+        </p>
+        <p class="now-meta">Last updated: March 2026</p>
+      </div>
+    </section>
+
+    <section id="skills" class="container reveal">
+      <h1 class="primary-heading">Skills</h1>
+      <div class="skills-rows">
+        <div class="skills-row">
+          <div class="skills-label">Java Development</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>Java SE/EE</span></span>
+            <span class="skill-chip"><span>Spring Framework</span></span>
+            <span class="skill-chip"><span>Spring Boot</span></span>
+            <span class="skill-chip"><span>Spring Security</span></span>
+            <span class="skill-chip"><span>Maven</span></span>
+            <span class="skill-chip"><span>JUnit</span></span>
+            <span class="skill-chip"><span>Mockito</span></span>
+            <span class="skill-chip"><span>REST</span></span>
+            <span class="skill-chip"><span>Microservices</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Python Development</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>Core Python</span></span>
+            <span class="skill-chip"><span>FastAPI</span></span>
+            <span class="skill-chip"><span>Pandas</span></span>
+            <span class="skill-chip"><span>NumPy</span></span>
+            <span class="skill-chip"><span>Pytest</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Web Development</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>HTML</span></span>
+            <span class="skill-chip"><span>CSS</span></span>
+            <span class="skill-chip"><span>JavaScript</span></span>
+            <span class="skill-chip"><span>React</span></span>
+            <span class="skill-chip"><span>Thymeleaf</span></span>
+            <span class="skill-chip"><span>HTTP</span></span>
+            <span class="skill-chip"><span>Tomcat</span></span>
+            <span class="skill-chip"><span>JSON</span></span>
+            <span class="skill-chip"><span>XML</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Cloud Computing</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>AWS</span></span>
+            <span class="skill-chip"><span>EC2</span></span>
+            <span class="skill-chip"><span>ECS</span></span>
+            <span class="skill-chip"><span>S3</span></span>
+            <span class="skill-chip"><span>Lambda</span></span>
+            <span class="skill-chip"><span>IAM</span></span>
+            <span class="skill-chip"><span>VPC</span></span>
+            <span class="skill-chip"><span>ALB</span></span>
+            <span class="skill-chip"><span>Serverless</span></span>
+            <span class="skill-chip"><span>AWS Syndicate</span></span>
+            <span class="skill-chip"><span>Docker</span></span>
+            <span class="skill-chip"><span>Containerization</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Version Control</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>Git</span></span>
+            <span class="skill-chip"><span>GitHub</span></span>
+            <span class="skill-chip"><span>GitLab</span></span>
+          </div>
+        </div>
+        <div class="skills-row">
+          <div class="skills-label">Database Management</div>
+          <div class="skills-grid">
+            <span class="skill-chip"><span>MySQL</span></span>
+            <span class="skill-chip"><span>PostgreSQL</span></span>
+            <span class="skill-chip"><span>MongoDB</span></span>
+            <span class="skill-chip"><span>DynamoDB</span></span>
+            <span class="skill-chip"><span>JDBC</span></span>
+            <span class="skill-chip"><span>JPA</span></span>
+            <span class="skill-chip"><span>Hibernate</span></span>
+            <span class="skill-chip"><span>Flyway</span></span>
+            <span class="skill-chip"><span>Alembic</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="container reveal">
+      <h1 class="primary-heading">
+        <span class="orange-gradient">My Projects</span>
+      </h1>
+      <div class="projects">
+        <!-- GymManagement Application (Microservices) -->
+        <a
+          href="https://github.com/DUT1K1/gym-microservies"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-item"
+        >
+          <img
+            src={withBase("resources/images/gym.png")}
+            alt="GymManagement Application"
+            loading="lazy"
+          />
+          <div class="overlay">
+            <span class="project-title">GymManagement Application</span>
+            <span class="link-icon"
+              ><i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></span>
+          </div>
+        </a>
+
+        <!-- University Management System -->
+        <a
+          href="https://github.com/DUT1K1/University-Management-System"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-item"
+        >
+          <img
+            src={withBase("resources/images/university-app.png")}
+            alt="University Management System"
+            loading="lazy"
+          />
+          <div class="overlay">
+            <span class="project-title">University Management System</span>
+            <span class="link-icon"
+              ><i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></span>
+          </div>
+        </a>
+
+        <!-- ToDo REST API -->
+        <a
+          href="https://github.com/DUT1K1/ToDo-REST-API"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-item"
+        >
+          <img
+            src={withBase("resources/images/todo-app.png")}
+            alt="ToDo Rest API"
+            loading="lazy"
+          />
+          <div class="overlay">
+            <span class="project-title">ToDo Rest API</span>
+            <span class="link-icon"
+              ><i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></span>
+          </div>
+        </a>
+
+        <!-- RESTful Weather API -->
+        <a
+          href="https://github.com/DUT1K1/Weather-API"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-item"
+        >
+          <img
+            src={withBase("resources/images/weather-app.png")}
+            alt="RESTful Weather API"
+            loading="lazy"
+          />
+          <div class="overlay">
+            <span class="project-title">RESTful Weather API</span>
+            <span class="link-icon"
+              ><i class="fa-solid fa-arrow-up-right-from-square"></i
+            ></span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="container reveal">
+      <h1 class="primary-heading heading-experience">Experience</h1>
+      
+      <!-- Python software developer in Quantori -->
+      <div class="experience-item experience-item-current">
+        <div class="experience-header">
+          <div class="experience-left">
+            <img
+              src={withBase("resources/images/quantori_logo.jpeg")}
+              alt="Quantori Logo"
+              class="company-logo"
+              loading="lazy"
+            />
+            <span class="experience-title"
+              >Python Software Developer (Remote)</span
+            >
+          </div>
+          <div class="date">Mar 2026 – <span class="present-label">Present</span></div>
+        </div>
+        <p>
+          
+        </p>
+      </div>
+
+      <!-- Python cloud architect bootcamp in Quantori -->
+      <div class="experience-item">
+        <div class="experience-header">
+          <div class="experience-left">
+            <img
+              src={withBase("resources/images/quantori_logo.jpeg")}
+              alt="Quantori Logo"
+              class="company-logo"
+              loading="lazy"
+            />
+            <span class="experience-title"
+              >Python Cloud Architect Bootcamp (Remote)</span
+            >
+          </div>
+          <div class="date">Sept 2025 – Mar 2026</div>
+        </div>
+        <p>
+          I'm taking part in a Quantori bootcamp focused on modern Python and cloud fundamentals. Each week I'm joining deep-dive lectures and labs covering Docker, Kubernetes, databases, messaging, testing, and deployment patterns—always tying concepts back to real-world workflows.<br><br>
+
+          I'm submitting biweekly projects that go beyond plain coding drills. Every assignment is framed around a practical theme, so I'm practicing design, documentation, and testing alongside the implementation. This keeps me building production-minded solutions instead of toy examples.<br><br>
+
+          As a pet project, I'm developing a Cheminformatics API that lets users run molecular substructure searches. I'm enforcing strict request validation, adding caching for hot queries, and offloading heavy computations to async workers to keep the API responsive. I'm containerizing the whole stack, deploying behind a load balancer, and instrumenting logs so performance and reliability are continuously monitored.<br><br>
+
+          Overall, I'm strengthening end-to-end skills—writing clean Python services, packaging them with containers, and delivering features with an eye for scalability, resilience, and developer experience.
+        </p>
+      </div>
+
+      <!-- Gakvetili.ge CTO tech lead -->
+      <div class="experience-item experience-item-current">
+        <div class="experience-header">
+          <div class="experience-left">
+            <img
+              src={withBase("resources/images/gakvetili_logo.jpg")}
+              alt="Gakvetili.ge logo"
+              class="company-logo"
+              loading="lazy"
+            />
+            <span class="experience-title"
+              >CTO, Tech Lead (Tbilisi, Georgia)</span
+            >
+          </div>
+          <div class="date">June 2025 – <span class="present-label">Present</span></div>
+        </div>
+        <p>
+          I'm leading the build of Memora, an online platform for private tutors and students, owning the backend and delivery end-to-end. I'm keeping the stack lean, releases frequent, and the UX snappy.<br><br>
+
+          I'm bootstrapping a Spring Boot 3 monorepo, wiring CI/CD, and running Postgres/Redis. I'm shipping secure JWT auth with email verification and feature-flagged social login, while designing the core domain—tutors, listings, availability, bookings, payments, and reviews. I'm building fast search, generating slots, and driving a hold-then-pay booking flow with refunds and recurring lessons.<br><br>
+
+          On AWS, I'm containerizing to ECR and running on ECS Fargate with RDS, S3 (signed URLs), CloudFront, and WAF. I'm adding observability with CloudWatch and Micrometer/Prometheus, and I'm maintaining automated backups and recovery drills.<br><br>
+
+          I'm delivering reliable notifications with an outbox + MQ and integrating Google Meet so confirmed bookings are getting join links. I'm rolling out an admin review panel with RBAC, rate limits, PII scoping, and audit trails—keeping costs low while moving fast.
+        </p>
+      </div>
+
+      <!-- Java Teacher at MZIURI -->
+      <div class="experience-item experience-item-current">
+        <div class="experience-header">
+          <div class="experience-left">
+            <img
+              src={withBase("resources/images/mziuri.jpg")}
+              alt="MZIURI logo"
+              class="company-logo"
+              loading="lazy"
+            />
+            <span class="experience-title"
+              >Java Teacher at MZIURI (Remote)</span
+            >
+          </div>
+          <div class="date">Sept 2023 – <span class="present-label">Present</span></div>
+        </div>
+        <p>
+          I'm teaching Java to kids and teens at MZIURI School, focusing on problem-solving, clean coding habits, and the core concepts of programming. My classes keep things practical and fun, with lots of hands-on exercises and real examples.<br><br>
+
+          By the end of the course, students are designing and building their own small Java projects—typically desktop apps packaged as runnable JARs. Along the way they learn OOP, collections, error handling, basic testing, and how to structure code they can actually maintain.<br><br>
+
+          Day to day, I'm planning and explaining each lesson clearly, assigning and grading homework almost every class, and giving targeted feedback so students improve quickly. I also curate engaging Java resources, sample code, and mini-challenges to keep motivation high.<br><br>
+
+          Because high-quality Java materials in Georgian are hard to find, I'm actively writing and publishing free, Georgian-language Java content so learners (and other teachers) have accessible, local resources they can rely on.
+        </p>
+      </div>
+
+      <!-- Junior Java Developer at EPAM Systems -->
+      <div class="experience-item">
+        <div class="experience-header">
+          <div class="experience-left">
+            <img
+              src={withBase("resources/images/epam-logo.jpeg")}
+              alt="EPAM Systems logo"
+              class="company-logo"
+              loading="lazy"
+            />
+            <span class="experience-title"
+              >Junior Java Developer at EPAM Systems (Remote)</span
+            >
+          </div>
+          <div class="date">Jul 2024 – Oct 2024</div>
+        </div>
+        <p>
+          Built a serverless gym management app using AWS Lambda, API Gateway,
+          DynamoDB, and Cognito for secure and scalable operations.
+        </p>
+      </div>
+
+      <!-- Java Backend Intern at EPAM Systems -->
+      <div class="experience-item">
+        <div class="experience-header">
+          <div class="experience-left">
+            <img
+              src={withBase("resources/images/epam-logo.jpeg")}
+              alt="EPAM Systems logo"
+              class="company-logo"
+              loading="lazy"
+            />
+            <span class="experience-title"
+              >Java Backend Intern at EPAM Systems (Remote)</span
+            >
+          </div>
+          <div class="date">Jan 2024 – Jul 2024</div>
+        </div>
+        <p>
+          Developed a scalable Java backend application utilizing Spring under
+          the guidance of senior developers, gaining hands-on experience in
+          building robust enterprise solutions.
+        </p>
+      </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="container reveal">
+      <h1 class="primary-heading heading-experience">Education</h1>
+
+      <!-- Bachelor of Computer Science -->
+      <div class="experience-item">
+          <div class="experience-header">
+            <div class="experience-left">
+              <img
+                src={withBase("resources/images/kiu.jpeg")}
+                alt="Kutaisi International University logo"
+                class="company-logo"
+                loading="lazy"
+              />
+              <span class="experience-title">Bachelor of Computer Science</span>
+            </div>
+            <div class="date">Sept 2022 – Jul 2026</div>
+          </div>
+          <p>
+            Pursuing a degree in Computer Science at Kutaisi International
+            University in Georgia, building a strong foundation in software
+            development, algorithms, and emerging technologies.
+          </p>
+      </div>
+
+      <!-- Add additional education items here if needed -->
+    </section>
+
+    <section id="academic" class="container reveal">
+      <h1 class="primary-heading heading-experience">Academic Experience</h1>
+
+      <!-- Research Experience -->
+      <h2 class="sub-heading">Research Experience</h2>
+      <div class="experience-item">
+        <div class="experience-header">
+          <div class="experience-left">
+            <img
+              src={withBase("resources/images/kiu.jpeg")}
+              alt="Kutaisi International University logo"
+              class="company-logo"
+              loading="lazy"
+            />
+            <span class="experience-title">Bachelor Thesis: Derivatives of Regular Expressions with Fuzzy Similarity</span>
+          </div>
+          <div class="date">June 2025 – Present</div>
+        </div>
+        <p>
+        This research extends classical derivatives of regular expressions by introducing fuzzy similarity relations. 
+        Instead of matching symbols exactly, the derivative also considers symbols that are sufficiently similar under a chosen cut value. 
+        This generalization enables approximate matching, making regular expressions more flexible for applications like pattern recognition and information retrieval.
+        </p>
+      </div>
+
+      <!-- Conferences & Workshops -->
+      <h2 class="sub-heading">Conferences & Workshops</h2>
+      <div class="academic-list">
+        <div class="academic-item">
+          <span class="role">Attendee</span>
+          <span class="event">Nineteenth International Tbilisi Summer School in Logic and Language</span>
+          <span class="location">Kutaisi International University – 2025 September</span>
+        </div>
+
+        <div class="academic-item">
+          <span class="role">Student Volunteer</span>
+          <span class="event">JELIA 2025</span>
+          <span class="location">Kutaisi International University – 2025 September</span>
+        </div>
+
+        <div class="academic-item">
+          <span class="role">Attendee</span>
+          <span class="event">School on Symbolic and Statistical Methods for Reasoning and Processing Formal Expressions</span>
+          <span class="location">Kutaisi International University – 2025 July</span>
+        </div>
+
+        <div class="academic-item">
+          <span class="role">Student Volunteer</span>
+          <span class="event">ITP 2024</span>
+          <span class="location">Tbilisi State University – 2024 September</span>
+        </div>
+
+        <div class="academic-item">
+          <span class="role">Attendee</span>
+          <span class="event">EuroProofNet Summer School on AI for Reasoning and Processing of Mathematics</span>
+          <span class="location">Kutaisi International University – 2024 July</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container reveal">
+      <h1 class="primary-heading">Contact</h1>
+      <p class="contact-description">Feel free to reach out!</p>
+
+      <div class="contact-email">
+        <i class="fa-solid fa-envelope email-icon"></i>
+        <a href="mailto:david.maisuradze0920@gmail.com" class="email-link"
+          >david.maisuradze0920@gmail.com</a
+        >
+      </div>
+
+      <div class="social-links">
+        <!-- LinkedIn -->
+        <a
+          href="https://www.linkedin.com/in/david-maisuradze2004/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn profile"
+        >
+          <i class="fa-brands fa-linkedin"></i>
+        </a>
+        <!-- Github -->
+        <a
+          href="https://github.com/DUT1K1"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub profile"
+        >
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <!-- Notion Java course -->
+        <a
+          href="https://opalescent-hub-1c1.notion.site/13fe260c066180d79b4dc85eb505f47f"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Java course on Notion"
+        >
+          <i class="fa-brands fa-java"></i>
+        </a>
+      </div>
+    </section>
+    </main>
+
+    <script is:inline src={withBase("resources/vendor/smooth-scrollbar.js")}></script>
+    <script is:inline src={withBase("scripts.js")}></script>
+  </body>
+</html>

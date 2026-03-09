@@ -1,0 +1,63 @@
+---
+import { getCollection } from "astro:content";
+import BlogFilters from "../../components/BlogFilters.jsx";
+import BlogHeader from "../../components/BlogHeader.astro";
+import BlogLayout from "../../layouts/BlogLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+const getReadingTime = (content) =>
+  Math.max(1, Math.ceil(content.split(/\s+/).filter(Boolean).length / 200));
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((left, right) => right.data.pubDate.valueOf() - left.data.pubDate.valueOf())
+  .map((post) => ({
+    slug: post.id.replace(/\.md$/, ""),
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate.toISOString(),
+    tags: post.data.tags,
+    featured: post.data.featured,
+    readingTime: getReadingTime(post.body),
+  }));
+
+const topicPreview = ["python", "java", "tech", "random stuff"];
+---
+
+<BlogLayout
+  title="Blog | Davit Maisuradze"
+  description="Articles about Python, Java, architecture, and building products."
+>
+  <BlogHeader currentPath="/blog" />
+
+  <main class="blog-shell">
+    <section class="container blog-hero">
+      <div class="blog-hero-panel">
+        <div class="blog-hero-copy">
+          <p class="blog-eyebrow">Notes and writing</p>
+          <h1>Blog</h1>
+          <p class="blog-hero-text">
+            Longer writing about backend engineering, startup execution, and the
+            systems thinking I am developing while building products.
+          </p>
+        </div>
+
+        <aside class="blog-hero-aside" aria-label="Blog summary">
+          <p class="blog-hero-label">What you will find here</p>
+          <ul class="blog-topic-list">
+            {topicPreview.map((topic) => (
+              <li>{topic}</li>
+            ))}
+          </ul>
+          <p class="blog-hero-note">
+            I write whatever feels fun, interesting, and valuable enough to
+            share publicly.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="container blog-index-section">
+      <BlogFilters client:load posts={posts} baseUrl={base} />
+    </section>
+  </main>
+</BlogLayout>

@@ -9,6 +9,7 @@
 # Node (if you ever use npm for tooling)
 node_modules/
 npm-debug.log*
+.astro/
 
 # Logs
 *.log

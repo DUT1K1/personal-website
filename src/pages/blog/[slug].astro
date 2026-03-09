@@ -1,0 +1,102 @@
+---
+import { getCollection, render } from "astro:content";
+import BlogHeader from "../../components/BlogHeader.astro";
+import BlogLayout from "../../layouts/BlogLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/\.md$/, "") },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const base = import.meta.env.BASE_URL;
+const withBase = (path = "") => `${base}${path}`;
+const postBody = post.body ?? "";
+const readingTime = Math.max(
+  1,
+  Math.ceil(postBody.split(/\s+/).filter(Boolean).length / 200)
+);
+const authorName = post.data.author ?? "Davit Maisuradze";
+
+const formatDate = (date) =>
+  new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+---
+
+<BlogLayout title={`${post.data.title} | Davit Maisuradze`} description={post.data.description}>
+  <BlogHeader currentPath="/blog" />
+
+  <main class="blog-shell">
+    <section class="container blog-post-shell">
+      <a href={withBase("blog/")} class="back-link">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        Back to all posts
+      </a>
+
+      <section class="blog-post-top">
+        <div class="blog-post-header">
+          <div class="blog-post-heading">
+            <h1>{post.data.title}</h1>
+            <p class="blog-post-description">{post.data.description}</p>
+          </div>
+        </div>
+
+        <aside class="blog-post-aside">
+          <div class="blog-post-author">
+            <img
+              src={withBase("resources/images/prof-pic.png")}
+              alt={`${authorName} portrait`}
+              class="blog-post-author-avatar"
+              loading="lazy"
+            />
+            <div>
+              <p class="blog-post-author-label">Written by</p>
+              <p class="blog-post-author-name">{authorName}</p>
+            </div>
+          </div>
+
+          <div class="blog-post-stat-grid">
+            <div class="blog-post-stat">
+              <span class="blog-post-stat-label">Published</span>
+              <span class="blog-post-stat-value">{formatDate(post.data.pubDate)}</span>
+            </div>
+
+            {post.data.updatedDate ? (
+              <div class="blog-post-stat">
+                <span class="blog-post-stat-label">Updated</span>
+                <span class="blog-post-stat-value">{formatDate(post.data.updatedDate)}</span>
+              </div>
+            ) : null}
+
+            <div class="blog-post-stat">
+              <span class="blog-post-stat-label">Reading time</span>
+              <span class="blog-post-stat-value">{readingTime} min read</span>
+            </div>
+          </div>
+
+          <div class="blog-card-tags blog-post-tags">
+            {post.data.tags.map((tag) => (
+              <a href={`${withBase("blog/")}?tag=${encodeURIComponent(tag)}`} class="blog-card-tag">
+                {tag}
+              </a>
+            ))}
+          </div>
+        </aside>
+      </section>
+
+      <article class="blog-post-content-card">
+        <div class="blog-post-content">
+          <Content />
+        </div>
+      </article>
+    </section>
+  </main>
+</BlogLayout>
