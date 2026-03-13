@@ -20,7 +20,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
     readingTime: getReadingTime(post.body),
   }));
 
-const topicPreview = ["python", "java", "tech", "random stuff"];
+const topicPreview = ["Programming", "Mathematics", "Tech", "Random stuff"];
 ---
 
 <BlogLayout
