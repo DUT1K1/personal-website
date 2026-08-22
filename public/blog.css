@@ -677,6 +677,17 @@
   color: #ffd0b8;
 }
 
+.blog-post-content a[href^="https://gakvetili.ge"] {
+  color: var(--gakvetili-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.blog-post-content a[href^="https://gakvetili.ge"]:hover {
+  color: var(--gakvetili-accent-bright);
+  text-shadow: 0 0 14px rgba(244, 163, 203, 0.3);
+}
+
 .blog-post-content img {
   width: 100%;
   border-radius: 22px;

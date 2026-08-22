@@ -13,7 +13,7 @@ featured: true
 draft: true
 ---
 
-Building the backend for Gakvetili.ge has been one of the most practical learning environments I have had. A real product does not let you hide behind toy architecture or vague plans. Every decision eventually shows up as user friction, delivery delay, or operational pain.
+Building the backend for [Gakvetili.ge](https://gakvetili.ge) has been one of the most practical learning environments I have had. A real product does not let you hide behind toy architecture or vague plans. Every decision eventually shows up as user friction, delivery delay, or operational pain.
 
 The stack is familiar on paper: Java, Spring Boot, PostgreSQL, Redis, and AWS. The difficult part is not choosing technologies. The difficult part is drawing boundaries correctly and shipping features in an order that keeps the product moving without creating a mess underneath it.
 

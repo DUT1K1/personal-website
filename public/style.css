@@ -12,6 +12,8 @@ html {
   --header-offset: 90px;
   --current-role-accent: #3bd6a6;
   --current-role-accent-soft: rgba(59, 214, 166, 0.18);
+  --gakvetili-accent: #f4a3cb;
+  --gakvetili-accent-bright: #ffd0e7;
 }
 
 body {
@@ -22,6 +24,18 @@ body {
 
 a {
   text-decoration: none;
+}
+
+.gakvetili-link {
+  color: var(--gakvetili-accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.gakvetili-link:hover {
+  color: var(--gakvetili-accent-bright);
+  text-shadow: 0 0 14px rgba(244, 163, 203, 0.3);
 }
 
 body.smooth-scroll {
