@@ -8,13 +8,13 @@ const blogHref = `${base}blog/`;
 const contactHref = `${base}#contact`;
 ---
 
-<header>
-  <nav class="blog-nav">
+<header class="site-header blog-header">
+  <nav class="blog-nav" aria-label="Primary navigation">
     <a href={homeHref} class="blog-brand">Davit Maisuradze</a>
 
-    <div class="blog-nav-links" aria-label="Primary">
-      <a href={homeHref} class:list={{ "is-active": isHome }}>Home</a>
-      <a href={blogHref} class:list={{ "is-active": isBlog }}>Blog</a>
+    <div class="blog-nav-links">
+      <a href={homeHref} class:list={{ "is-active": isHome }} aria-current={isHome ? "page" : undefined}>Home</a>
+      <a href={blogHref} class:list={{ "is-active": isBlog }} aria-current={isBlog ? "page" : undefined}>Blog</a>
       <a href={contactHref}>Contact</a>
     </div>
   </nav>

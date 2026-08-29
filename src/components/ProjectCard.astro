@@ -1,0 +1,144 @@
+---
+interface Props {
+  title: string;
+  kicker: string;
+  description: string;
+  details: string;
+  highlights: string[];
+  href: string;
+  image: string;
+  imageAlt: string;
+  detailImage?: string;
+  detailImageAlt?: string;
+  detailImageFit?: "contain" | "cover";
+  detailImagePosition?: string;
+  linkLabel: string;
+  width?: number;
+  height?: number;
+  detailWidth?: number;
+  detailHeight?: number;
+}
+
+const {
+  title,
+  kicker,
+  description,
+  details,
+  highlights,
+  href,
+  image,
+  imageAlt,
+  detailImage = image,
+  detailImageAlt = imageAlt,
+  detailImageFit = "contain",
+  detailImagePosition = "center",
+  linkLabel,
+  width,
+  height,
+  detailWidth = width,
+  detailHeight = height,
+} = Astro.props;
+
+const cardId = `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
+---
+
+<article class="project-card" data-project-card>
+  <button
+    type="button"
+    class="project-card-front"
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    aria-controls={`${cardId}-dialog`}
+    aria-label={`Open project details for ${title}`}
+    data-project-front
+  >
+    <img
+      src={image}
+      alt={imageAlt}
+      width={width}
+      height={height}
+      loading="lazy"
+    />
+    <span class="overlay">
+      <span class="project-copy">
+        <span class="project-kicker">{kicker}</span>
+        <span class="project-title">{title}</span>
+      </span>
+      <span class="project-flip-icon" aria-hidden="true">
+        <i class="fa-solid fa-expand"></i>
+      </span>
+    </span>
+    <span class="project-flip-hint" aria-hidden="true">View project</span>
+  </button>
+
+  <dialog
+    class="project-dialog"
+    id={`${cardId}-dialog`}
+    aria-labelledby={`${cardId}-title`}
+    aria-describedby={`${cardId}-description`}
+    data-project-dialog
+  >
+    <div
+      class="project-dialog-stage"
+      data-project-stage
+    >
+      <article class="project-dialog-back">
+        <button
+          type="button"
+          class="project-dialog-close"
+          aria-label={`Close ${title} project details`}
+          data-project-close
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+
+        <div
+          class:list={[
+            "project-dialog-media",
+            { "project-dialog-media-cover": detailImageFit === "cover" },
+          ]}
+          style={`--project-image-position: ${detailImagePosition}`}
+        >
+          <img
+            class="project-dialog-media-ambient"
+            src={detailImage}
+            alt=""
+            aria-hidden="true"
+            width={detailWidth}
+            height={detailHeight}
+          />
+          <img
+            class="project-dialog-media-image"
+            src={detailImage}
+            alt={detailImageAlt}
+            width={detailWidth}
+            height={detailHeight}
+          />
+        </div>
+
+        <div class="project-dialog-content">
+          <div class="project-dialog-copy">
+            <span class="project-kicker">{kicker}</span>
+            <h3 id={`${cardId}-title`}>{title}</h3>
+            <p id={`${cardId}-description`} class="project-dialog-lead">{description}</p>
+            <p>{details}</p>
+
+            <ul class="project-highlights" aria-label="Project highlights">
+              {highlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>
+          </div>
+
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="project-visit-link"
+          >
+            {linkLabel}
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+          </a>
+        </div>
+      </article>
+    </div>
+  </dialog>
+</article>

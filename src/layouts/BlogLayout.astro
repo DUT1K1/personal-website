@@ -17,6 +17,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#161513" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -36,6 +37,11 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" href={withBase("resources/images/tab-icon.png")} type="image/png" />
   </head>
   <body class="blog-page">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <slot />
+    <footer class="site-footer blog-footer">
+      <p>© {new Date().getFullYear()} Davit Maisuradze</p>
+      <a href={withBase("")}>Portfolio</a>
+    </footer>
   </body>
 </html>

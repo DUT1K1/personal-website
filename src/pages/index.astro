@@ -1,7 +1,98 @@
 ---
+import ProjectCard from "../components/ProjectCard.astro";
+
 const base = import.meta.env.BASE_URL;
 const withBase = (path = "") => `${base}${path}`;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+
+const projects = [
+  {
+    title: "New Legal Group",
+    kicker: "Web design & development",
+    description:
+      "A multilingual website I designed and implemented for a Georgian legal firm, with a refined editorial system and clear paths to services, team information, and contact.",
+    details:
+      "The work covered the experience end to end—from the visual direction and responsive page system to production implementation. The result presents complex legal information in a calm, credible format across devices and languages.",
+    highlights: ["UX/UI design", "Responsive implementation", "Multilingual experience"],
+    href: "https://newlegal.ge/",
+    image: withBase("resources/images/newlegal-project.webp"),
+    imageAlt: "New Legal Group website sharing banner",
+    detailImage: withBase("resources/images/newlegal-project.webp"),
+    detailImageAlt: "New Legal Group website presentation",
+    linkLabel: "Visit live site",
+    width: 1200,
+    height: 630,
+  },
+  {
+    title: "Gakvetili.ge",
+    kicker: "Platform & product engineering",
+    description:
+      "A platform I built to connect students with private tutors, covering tutor profiles, discovery, availability, bookings, payments, notifications, and operational tooling.",
+    details:
+      "I developed the product across its core operational flows, balancing the student experience with the tools tutors and the platform team need to manage lessons reliably from discovery through booking.",
+    highlights: ["Product engineering", "Java & Spring Boot", "Platform operations"],
+    href: "https://gakvetili.ge/",
+    image: withBase("resources/images/gakvetili-project.jpg"),
+    imageAlt: "Gakvetili.ge private tutors platform sharing banner",
+    detailImage: withBase("resources/images/gakvetili-project.jpg"),
+    detailImageAlt: "Gakvetili.ge private tutors platform presentation",
+    linkLabel: "Visit live site",
+    width: 1731,
+    height: 909,
+  },
+  {
+    title: "Gym Management application",
+    kicker: "Java · AWS · Microservices",
+    description:
+      "A microservices-based gym management system built with Java and AWS, focused on secure and scalable member and training workflows.",
+    details:
+      "The project explores clear service boundaries and cloud-backed workflows for managing members, trainers, and sessions, with an emphasis on maintainable backend architecture.",
+    highlights: ["Java", "AWS", "Microservices"],
+    href: "https://github.com/DUT1K1/gym-microservies",
+    image: withBase("resources/images/gym.png"),
+    imageAlt: "Gym Management application",
+    linkLabel: "View on GitHub",
+  },
+  {
+    title: "University Management System",
+    kicker: "Java · Spring",
+    description:
+      "A Java and Spring system for organizing university operations, academic records, and the workflows shared by students and staff.",
+    details:
+      "It brings common academic workflows into one system, giving students and staff clearer ways to manage records and the day-to-day processes surrounding university life.",
+    highlights: ["Java", "Spring", "Academic workflows"],
+    href: "https://github.com/DUT1K1/University-Management-System",
+    image: withBase("resources/images/university-app.png"),
+    imageAlt: "University Management System",
+    linkLabel: "View on GitHub",
+  },
+  {
+    title: "ToDo REST API",
+    kicker: "Java · REST API",
+    description:
+      "A REST API for creating, organizing, and tracking tasks, built around clear endpoints and a maintainable backend structure.",
+    details:
+      "The project focuses on predictable resource design, validation, persistence, and error handling—the foundations of a clean backend service that is straightforward to extend.",
+    highlights: ["Java", "REST design", "Backend architecture"],
+    href: "https://github.com/DUT1K1/ToDo-REST-API",
+    image: withBase("resources/images/todo-app.png"),
+    imageAlt: "ToDo REST API interface",
+    linkLabel: "View on GitHub",
+  },
+  {
+    title: "RESTful Weather API",
+    kicker: "Java · REST API",
+    description:
+      "A focused RESTful service that retrieves and presents forecast data through an external weather API integration.",
+    details:
+      "It wraps an external forecast provider behind a focused API, keeping integration concerns separate from the client-facing contract and presenting weather data consistently.",
+    highlights: ["Java", "External API integration", "REST design"],
+    href: "https://github.com/DUT1K1/Weather-API",
+    image: withBase("resources/images/weather-app.png"),
+    imageAlt: "RESTful Weather API interface",
+    linkLabel: "View on GitHub",
+  },
+];
 ---
 
 <!DOCTYPE html>
@@ -14,7 +105,14 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
       name="description"
       content="Davit Maisuradze is a software developer and tech lead building backend systems with Java, Python, Spring Boot, and AWS."
     />
+    <meta name="theme-color" content="#161513" />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href={withBase("style.css")} />
     <link
       rel="stylesheet"
@@ -24,68 +122,56 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
       referrerpolicy="no-referrer"
     />
     <link rel="icon" href={withBase("resources/images/tab-icon.png")} type="image/png" />
+    <script is:inline>document.documentElement.classList.add("js");</script>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <!-- Header / Navigation -->
-    <header>
-      <nav>
-        <div class="language-switcher">
-          <!-- <button onclick="setLanguage('en')">English</button>
-          <button onclick="setLanguage('ge')">ქართული</button> -->
-        </div>
+    <header class="site-header">
+      <nav aria-label="Primary navigation">
+        <a class="site-brand" href="#home" aria-label="Davit Maisuradze, home">
+          <span class="site-brand-mark" aria-hidden="true">DM</span>
+          <span>Davit Maisuradze</span>
+        </a>
 
-        <input
-          type="checkbox"
-          id="nav-toggle"
-          class="nav-toggle"
-          aria-hidden="true"
-          tabindex="-1"
-        />
-        <label
+        <button
+          type="button"
           class="menu-toggle"
-          for="nav-toggle"
-          role="button"
           aria-label="Toggle navigation"
           aria-controls="primary-nav"
           aria-expanded="false"
         >
           <i class="fa-solid fa-bars icon-open" aria-hidden="true"></i>
           <i class="fa-solid fa-xmark icon-close" aria-hidden="true"></i>
-        </label>
+        </button>
 
         <div class="navbar" id="primary-nav">
-          <div><a href="#about" class="nav-link">About</a></div>
-          <div><a href="#now" class="nav-link">Now</a></div>
-          <div><a href="#skills" class="nav-link">Skills</a></div>
-          <div><a href="#projects" class="nav-link">Projects</a></div>
-          <div>
-            <a href="#experience" class="nav-link">Experience</a>
-          </div>
-          <div>
-            <a href="#education" class="nav-link">Education</a>
-          </div>
-          <div><a href="#academic" class="nav-link">Academic Experience</a></div>
-          <div><a href="#contact" class="nav-link">Contact</a></div>
-          <div>
-            <a
-              href={withBase("blog/")}
-              class="nav-link"
-              >Blog</a
-            >
-          </div>
+          <a href="#about" class="nav-link">About</a>
+          <a href="#experience" class="nav-link">Work</a>
+          <a href="#projects" class="nav-link">Projects</a>
+          <a href={withBase("blog/")} class="nav-link">Writing</a>
+          <a href="#contact" class="nav-link nav-link-contact">Contact</a>
         </div>
       </nav>
     </header>
 
-    <main id="scroll-container">
+    <main id="main-content">
       <!-- Home Section -->
-      <section id="home" class="container reveal">
+      <section id="home" class="container hero-section reveal" aria-labelledby="home-title">
         <div class="about">
           <div class="avatar">
-            <img src={withBase("resources/images/prof-pic.png")} alt="Avatar" />
+            <img
+              src={withBase("resources/images/prof-pic.png")}
+              alt="Portrait of Davit Maisuradze"
+              width="251"
+              height="251"
+              decoding="async"
+              fetchpriority="high"
+            />
           </div>
           <div class="about-text">
-            <h1>Hi, I'm <span>Davit Maisuradze</span></h1>
+            <p class="eyebrow">Software developer · Tech lead · Educator</p>
+            <h1 id="home-title">Hi, I'm <span>Davit Maisuradze</span></h1>
             <p>
               I'm the CTO and Tech Lead at <a class="gakvetili-link" href="https://gakvetili.ge"
                 target="_blank" rel="noopener noreferrer">Gakvetili.ge</a
@@ -100,17 +186,17 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
               href={withBase("resources/files/David Maisuradze Resume.docx.pdf")}
               download
               class="btn-secondary"
-              >Download Resume</a
+              >Download Resume <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a
             >
           </div>
         </div>
       </section>
 
     <!-- About Section -->
-    <section id="about" class="container reveal">
+    <section id="about" class="container reveal" aria-labelledby="about-title">
       <div class="about">
         <div class="about-text">
-          <h1>About Me</h1>
+          <h2 id="about-title">About Me</h2>
           <p>
             Hello, I'm David Maisuradze, a passionate
             <span class="gradient-text">Java Developer</span> based in Tbilisi,
@@ -139,8 +225,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
       </div>
     </section>
 
-    <section id="now" class="container reveal">
-      <h1 class="primary-heading">Now</h1>
+    <section id="now" class="container reveal" aria-labelledby="now-title">
+      <h2 id="now-title" class="primary-heading">Now</h2>
       <div class="now-card">
         <p>
           I'm currently working at Quantori as a Python Software Developer. At
@@ -151,12 +237,12 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
           final steps of my bachelor's thesis, which should be ready in the next
           one or two months.
         </p>
-        <p class="now-meta">Last updated: March 2026</p>
+        <p class="now-meta">Last updated: <time datetime="2026-03">March 2026</time></p>
       </div>
     </section>
 
-    <section id="skills" class="container reveal">
-      <h1 class="primary-heading">Skills</h1>
+    <section id="skills" class="container reveal" aria-labelledby="skills-title">
+      <h2 id="skills-title" class="primary-heading">Skills</h2>
       <div class="skills-rows">
         <div class="skills-row">
           <div class="skills-label">Java Development</div>
@@ -238,96 +324,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
       </div>
     </section>
 
-    <section id="projects" class="container reveal">
-      <h1 class="primary-heading">
-        <span class="orange-gradient">My Projects</span>
-      </h1>
-      <div class="projects">
-        <!-- GymManagement Application (Microservices) -->
-        <a
-          href="https://github.com/DUT1K1/gym-microservies"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-item"
-        >
-          <img
-            src={withBase("resources/images/gym.png")}
-            alt="GymManagement Application"
-            loading="lazy"
-          />
-          <div class="overlay">
-            <span class="project-title">GymManagement Application</span>
-            <span class="link-icon"
-              ><i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></span>
-          </div>
-        </a>
-
-        <!-- University Management System -->
-        <a
-          href="https://github.com/DUT1K1/University-Management-System"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-item"
-        >
-          <img
-            src={withBase("resources/images/university-app.png")}
-            alt="University Management System"
-            loading="lazy"
-          />
-          <div class="overlay">
-            <span class="project-title">University Management System</span>
-            <span class="link-icon"
-              ><i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></span>
-          </div>
-        </a>
-
-        <!-- ToDo REST API -->
-        <a
-          href="https://github.com/DUT1K1/ToDo-REST-API"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-item"
-        >
-          <img
-            src={withBase("resources/images/todo-app.png")}
-            alt="ToDo Rest API"
-            loading="lazy"
-          />
-          <div class="overlay">
-            <span class="project-title">ToDo Rest API</span>
-            <span class="link-icon"
-              ><i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></span>
-          </div>
-        </a>
-
-        <!-- RESTful Weather API -->
-        <a
-          href="https://github.com/DUT1K1/Weather-API"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-item"
-        >
-          <img
-            src={withBase("resources/images/weather-app.png")}
-            alt="RESTful Weather API"
-            loading="lazy"
-          />
-          <div class="overlay">
-            <span class="project-title">RESTful Weather API</span>
-            <span class="link-icon"
-              ><i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></span>
-          </div>
-        </a>
-      </div>
-    </section>
-
     <!-- Experience Section -->
-    <section id="experience" class="container reveal">
-      <h1 class="primary-heading heading-experience">Experience</h1>
+    <section id="experience" class="container reveal" aria-labelledby="experience-title">
+      <h2 id="experience-title" class="primary-heading heading-experience">Experience</h2>
       
       <!-- Python software developer in Quantori -->
       <div class="experience-item experience-item-current">
@@ -345,9 +344,6 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
           </div>
           <div class="date">Mar 2026 – <span class="present-label">Present</span></div>
         </div>
-        <p>
-          
-        </p>
       </div>
 
       <!-- Python cloud architect bootcamp in Quantori -->
@@ -477,9 +473,36 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
       </div>
     </section>
 
+    <section id="projects" class="container reveal" aria-labelledby="projects-title">
+      <h2 id="projects-title" class="primary-heading">
+        <span class="orange-gradient">My Projects</span>
+      </h2>
+      <p class="section-intro">
+        A selection of products and backend systems I have designed, built, and
+        shipped.
+      </p>
+      <div class="projects">
+        {projects.slice(0, 4).map((project) => <ProjectCard {...project} />)}
+      </div>
+
+      <details class="projects-more">
+        <summary>
+          <span class="projects-more-label projects-more-label-closed">See all projects</span>
+          <span class="projects-more-label projects-more-label-open">Show fewer projects</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </summary>
+
+        <div class="projects-more-content">
+          <div class="projects projects-secondary">
+            {projects.slice(4).map((project) => <ProjectCard {...project} />)}
+          </div>
+        </div>
+      </details>
+    </section>
+
     <!-- Education Section -->
-    <section id="education" class="container reveal">
-      <h1 class="primary-heading heading-experience">Education</h1>
+    <section id="education" class="container reveal" aria-labelledby="education-title">
+      <h2 id="education-title" class="primary-heading heading-experience">Education</h2>
 
       <!-- Bachelor of Computer Science -->
       <div class="experience-item">
@@ -505,8 +528,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
       <!-- Add additional education items here if needed -->
     </section>
 
-    <section id="academic" class="container reveal">
-      <h1 class="primary-heading heading-experience">Academic Experience</h1>
+    <section id="academic" class="container reveal" aria-labelledby="academic-title">
+      <h2 id="academic-title" class="primary-heading heading-experience">Academic Experience</h2>
 
       <!-- Research Experience -->
       <h2 class="sub-heading">Research Experience</h2>
@@ -567,12 +590,14 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="container reveal">
-      <h1 class="primary-heading">Contact</h1>
-      <p class="contact-description">Feel free to reach out!</p>
+    <section id="contact" class="container reveal" aria-labelledby="contact-title">
+      <div class="contact-panel">
+      <p class="eyebrow">Let’s build something useful</p>
+      <h2 id="contact-title" class="primary-heading">Contact</h2>
+      <p class="contact-description">Have a project, opportunity, or idea in mind? Feel free to reach out.</p>
 
       <div class="contact-email">
-        <i class="fa-solid fa-envelope email-icon"></i>
+        <i class="fa-solid fa-envelope email-icon" aria-hidden="true"></i>
         <a href="mailto:david.maisuradze0920@gmail.com" class="email-link"
           >david.maisuradze0920@gmail.com</a
         >
@@ -586,7 +611,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
           rel="noopener noreferrer"
           aria-label="LinkedIn profile"
         >
-          <i class="fa-brands fa-linkedin"></i>
+          <i class="fa-brands fa-linkedin" aria-hidden="true"></i>
         </a>
         <!-- Github -->
         <a
@@ -595,7 +620,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
           rel="noopener noreferrer"
           aria-label="GitHub profile"
         >
-          <i class="fa-brands fa-github"></i>
+          <i class="fa-brands fa-github" aria-hidden="true"></i>
         </a>
         <!-- Notion Java course -->
         <a
@@ -604,13 +629,18 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
           rel="noopener noreferrer"
           aria-label="Java course on Notion"
         >
-          <i class="fa-brands fa-java"></i>
+          <i class="fa-brands fa-java" aria-hidden="true"></i>
         </a>
+      </div>
       </div>
     </section>
     </main>
 
-    <script is:inline src={withBase("resources/vendor/smooth-scrollbar.js")}></script>
+    <footer class="site-footer">
+      <p>© {new Date().getFullYear()} Davit Maisuradze</p>
+      <a href="#home">Back to top <i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a>
+    </footer>
+
     <script is:inline src={withBase("scripts.js")}></script>
   </body>
 </html>

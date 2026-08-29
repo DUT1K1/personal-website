@@ -57,6 +57,19 @@ export default function BlogFilters({ posts, baseUrl }) {
     window.history.replaceState({}, "", nextUrl);
   }, [query, selectedTag]);
 
+  if (posts.length === 0) {
+    return (
+      <div className="blog-empty-state blog-empty-state-initial">
+        <p className="blog-eyebrow">In progress</p>
+        <h2>New writing is on the way.</h2>
+        <p>
+          I’m working on articles about backend engineering, security, and the
+          lessons that come from building real products.
+        </p>
+      </div>
+    );
+  }
+
   const normalizedQuery = deferredQuery.trim().toLowerCase();
   const filteredPosts = posts.filter((post) => {
     const matchesTag =
@@ -72,6 +85,7 @@ export default function BlogFilters({ posts, baseUrl }) {
     <div className="blog-filter-shell">
       <div className="blog-toolbar">
         <label className="blog-search" htmlFor="blog-search">
+          <span className="sr-only">Search articles by title</span>
           <div className="blog-search-input-wrap">
             <i className="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
             <input
@@ -80,11 +94,12 @@ export default function BlogFilters({ posts, baseUrl }) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search posts..."
+              autoComplete="off"
             />
           </div>
         </label>
 
-        <p className="blog-results-count">
+        <p className="blog-results-count" aria-live="polite">
           {filteredPosts.length} post{filteredPosts.length === 1 ? "" : "s"}
         </p>
       </div>
@@ -158,6 +173,16 @@ export default function BlogFilters({ posts, baseUrl }) {
         <div className="blog-empty-state">
           <h2>No posts match this filter.</h2>
           <p>Try another tag or clear the search query.</p>
+          <button
+            type="button"
+            className="blog-clear-filters"
+            onClick={() => {
+              setQuery("");
+              setSelectedTag("all");
+            }}
+          >
+            Clear filters
+          </button>
         </div>
       )}
     </div>
