@@ -43,7 +43,11 @@ const withBase = (path = "") => `${base}${path}`;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href={withBase("style.css")} />
@@ -64,5 +68,6 @@ const withBase = (path = "") => `${base}${path}`;
       <p>© {new Date().getFullYear()} Davit Maisuradze</p>
       <a href={withBase("")}>Portfolio</a>
     </footer>
+    <script is:inline src={withBase("scripts.js")}></script>
   </body>
 </html>

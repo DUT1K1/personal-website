@@ -1,0 +1,41 @@
+---
+const { currentPath = Astro.url.pathname } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const isBlog = currentPath.startsWith(`${base}blog`) || currentPath.startsWith("/blog");
+const isHome = !isBlog;
+const homeHref = isHome ? "#home" : base;
+const sectionHref = (section) => (isHome ? `#${section}` : `${base}#${section}`);
+const blogHref = `${base}blog/`;
+---
+
+<header class="site-header">
+  <nav class="site-nav" aria-label="Primary navigation">
+    <a class="site-brand" href={homeHref} aria-label="Davit Maisuradze, home">
+      <span class="site-brand-mark" aria-hidden="true">DM</span>
+      <span>Davit Maisuradze</span>
+    </a>
+
+    <button
+      type="button"
+      class="menu-toggle"
+      aria-label="Open navigation"
+      aria-controls="primary-nav"
+      aria-expanded="false"
+    >
+      <i class="fa-solid fa-bars icon-open" aria-hidden="true"></i>
+      <i class="fa-solid fa-xmark icon-close" aria-hidden="true"></i>
+    </button>
+
+    <div class="navbar" id="primary-nav">
+      <a href={sectionHref("about")} class="nav-link">About</a>
+      <a href={sectionHref("experience")} class="nav-link">Work</a>
+      <a href={sectionHref("projects")} class="nav-link">Projects</a>
+      <a
+        href={blogHref}
+        class="nav-link"
+        aria-current={isBlog ? "page" : undefined}
+      >Writing</a>
+      <a href={sectionHref("contact")} class="nav-link nav-link-contact">Contact</a>
+    </div>
+  </nav>
+</header>

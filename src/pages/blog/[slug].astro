@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
-import BlogHeader from "../../components/BlogHeader.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
 import BlogLayout from "../../layouts/BlogLayout.astro";
 
 export async function getStaticPaths() {
@@ -80,7 +80,7 @@ const formatDate = (date) =>
   noindex={post.data.noindex}
   structuredData={articleStructuredData}
 >
-  <BlogHeader currentPath="/blog" />
+  <SiteHeader currentPath="/blog" />
 
   <main id="main-content" class="blog-shell">
     <section class="container blog-post-shell">
