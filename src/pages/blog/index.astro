@@ -21,11 +21,33 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
   }));
 
 const topicPreview = ["Programming", "Mathematics", "Tech", "Random stuff"];
+const siteUrl = Astro.site ?? new URL(Astro.url.origin);
+const blogUrl = new URL(Astro.url.pathname, siteUrl);
+const blogTitle = "Writing on Software Engineering | Davit Maisuradze";
+const blogDescription =
+  "Articles by Davit Maisuradze about Java, Python, backend engineering, cloud architecture, security, and building real software products.";
+const blogStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": `${blogUrl.href}#blog`,
+  url: blogUrl.href,
+  name: blogTitle,
+  description: blogDescription,
+  author: {
+    "@type": "Person",
+    "@id": `${new URL("/", siteUrl).href}#davit-maisuradze`,
+    name: "Davit Maisuradze",
+    url: new URL("/", siteUrl).href,
+  },
+};
 ---
 
 <BlogLayout
-  title="Blog | Davit Maisuradze"
-  description="Articles about Python, Java, architecture, and building products."
+  title={blogTitle}
+  description={blogDescription}
+  canonical={blogUrl}
+  noindex={posts.length === 0}
+  structuredData={blogStructuredData}
 >
   <BlogHeader currentPath="/blog" />
 

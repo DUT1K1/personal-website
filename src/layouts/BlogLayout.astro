@@ -1,13 +1,23 @@
 ---
 import "katex/dist/katex.min.css";
+import Seo from "../components/Seo.astro";
 
 const {
-  title = "Blog | Davit Maisuradze",
+  title = "Writing on Software Engineering | Davit Maisuradze",
   description = "Notes on Python, Java, cloud architecture, and building products.",
+  canonical,
+  image,
+  imageAlt,
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  tags = [],
+  noindex = false,
+  nofollow = false,
+  structuredData = [],
 } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const withBase = (path = "") => `${base}${path}`;
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!DOCTYPE html>
@@ -15,10 +25,21 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <Seo
+      title={title}
+      description={description}
+      canonical={canonical}
+      image={image}
+      imageAlt={imageAlt}
+      type={type}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+      noindex={noindex}
+      nofollow={nofollow}
+      structuredData={structuredData}
+    />
     <meta name="theme-color" content="#161513" />
-    <link rel="canonical" href={canonicalUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

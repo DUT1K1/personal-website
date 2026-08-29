@@ -22,6 +22,42 @@ const readingTime = Math.max(
   Math.ceil(postBody.split(/\s+/).filter(Boolean).length / 200)
 );
 const authorName = post.data.author ?? "Davit Maisuradze";
+const siteUrl = Astro.site ?? new URL(Astro.url.origin);
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
+const homepageUrl = new URL("/", siteUrl);
+const socialImagePath =
+  post.data.image ?? withBase("resources/images/davit-maisuradze-social-card.png");
+const socialImageUrl = new URL(socialImagePath, siteUrl);
+const socialImageAlt =
+  post.data.imageAlt ?? `${post.data.title} — article by Davit Maisuradze`;
+const publishedTime = post.data.pubDate.toISOString();
+const modifiedTime = (post.data.updatedDate ?? post.data.pubDate).toISOString();
+const articleStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "@id": `${canonicalUrl.href}#article`,
+  url: canonicalUrl.href,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": canonicalUrl.href,
+  },
+  headline: post.data.title,
+  description: post.data.description,
+  image: [socialImageUrl.href],
+  datePublished: publishedTime,
+  dateModified: modifiedTime,
+  author: {
+    "@type": "Person",
+    "@id": `${homepageUrl.href}#davit-maisuradze`,
+    name: authorName,
+    url: homepageUrl.href,
+    sameAs: [
+      "https://www.linkedin.com/in/david-maisuradze2004/",
+      "https://github.com/DUT1K1",
+    ],
+  },
+  keywords: post.data.tags,
+};
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en", {
@@ -31,7 +67,19 @@ const formatDate = (date) =>
   }).format(date);
 ---
 
-<BlogLayout title={`${post.data.title} | Davit Maisuradze`} description={post.data.description}>
+<BlogLayout
+  title={`${post.data.title} | Davit Maisuradze`}
+  description={post.data.description}
+  canonical={canonicalUrl}
+  image={socialImageUrl}
+  imageAlt={socialImageAlt}
+  type="article"
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
+  tags={post.data.tags}
+  noindex={post.data.noindex}
+  structuredData={articleStructuredData}
+>
   <BlogHeader currentPath="/blog" />
 
   <main id="main-content" class="blog-shell">
