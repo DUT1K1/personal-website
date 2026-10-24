@@ -1,12 +1,23 @@
 import { useDeferredValue, useEffect, useState } from "react";
 import { formatTag } from "../utils/tags.js";
 
+// Dates render on the server and again in the browser, so they must come out
+// identical in both. Browsers ship different Georgian locale data than Node,
+// and the reader's time zone can shift the day, so format in UTC and spell
+// the Georgian months out ourselves.
+const GEORGIAN_MONTHS = ["იან", "თებ", "მარ", "აპრ", "მაი", "ივნ", "ივლ", "აგვ", "სექ", "ოქტ", "ნოე", "დეკ"];
+
 function formatDate(dateString, locale) {
-  return new Intl.DateTimeFormat(locale === "ka" ? "ka-GE" : "en", {
+  const date = new Date(dateString);
+  if (locale === "ka") {
+    return `${date.getUTCDate()} ${GEORGIAN_MONTHS[date.getUTCMonth()]}. ${date.getUTCFullYear()}`;
+  }
+  return new Intl.DateTimeFormat("en", {
     year: "numeric",
     month: "short",
     day: "numeric",
-  }).format(new Date(dateString));
+    timeZone: "UTC",
+  }).format(date);
 }
 
 export default function BlogFilters({ posts, baseUrl, locale = "en" }) {

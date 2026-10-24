@@ -42,7 +42,7 @@ const {
 const cardId = `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
 ---
 
-<article class="project-card" data-project-card>
+<article class="project-card" id={cardId} data-project-card>
   <button
     type="button"
     class="project-card-front"
@@ -52,7 +52,7 @@ const cardId = `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replac
     aria-label={`Open project details for ${title}`}
     data-project-front
   >
-    <img
+    <img draggable="false"
       src={image}
       alt={imageAlt}
       width={width}
@@ -99,7 +99,7 @@ const cardId = `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replac
           ]}
           style={`--project-image-position: ${detailImagePosition}`}
         >
-          <img
+          <img draggable="false"
             class="project-dialog-media-ambient"
             src={detailImage}
             alt=""
@@ -107,7 +107,7 @@ const cardId = `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replac
             width={detailWidth}
             height={detailHeight}
           />
-          <img
+          <img draggable="false"
             class="project-dialog-media-image"
             src={detailImage}
             alt={detailImageAlt}

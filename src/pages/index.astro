@@ -1,7 +1,11 @@
 ---
+import { getCollection } from "astro:content";
+import CommandPalette from "../components/CommandPalette.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import Seo from "../components/Seo.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+import SkillsExplorer from "../components/SkillsExplorer.astro";
+import TerminalMode from "../components/TerminalMode.astro";
 
 const base = import.meta.env.BASE_URL;
 const withBase = (path = "") => `${base}${path}`;
@@ -121,7 +125,7 @@ const projects = [
       "The project explores clear service boundaries and cloud-backed workflows for managing members, trainers, and sessions, with an emphasis on maintainable backend architecture.",
     highlights: ["Java", "AWS", "Microservices"],
     href: "https://github.com/DUT1K1/gym-microservies",
-    image: withBase("resources/images/gym.png"),
+    image: withBase("resources/images/gym.webp"),
     imageAlt: "Gym Management application",
     linkLabel: "View on GitHub",
   },
@@ -134,7 +138,7 @@ const projects = [
       "It brings common academic workflows into one system, giving students and staff clearer ways to manage records and the day-to-day processes surrounding university life.",
     highlights: ["Java", "Spring", "Academic workflows"],
     href: "https://github.com/DUT1K1/University-Management-System",
-    image: withBase("resources/images/university-app.png"),
+    image: withBase("resources/images/university-app.webp"),
     imageAlt: "University Management System",
     linkLabel: "View on GitHub",
   },
@@ -147,7 +151,7 @@ const projects = [
       "The project focuses on predictable resource design, validation, persistence, and error handling—the foundations of a clean backend service that is straightforward to extend.",
     highlights: ["Java", "REST design", "Backend architecture"],
     href: "https://github.com/DUT1K1/ToDo-REST-API",
-    image: withBase("resources/images/todo-app.png"),
+    image: withBase("resources/images/todo-app.webp"),
     imageAlt: "ToDo REST API interface",
     linkLabel: "View on GitHub",
   },
@@ -160,10 +164,336 @@ const projects = [
       "It wraps an external forecast provider behind a focused API, keeping integration concerns separate from the client-facing contract and presenting weather data consistently.",
     highlights: ["Java", "External API integration", "REST design"],
     href: "https://github.com/DUT1K1/Weather-API",
-    image: withBase("resources/images/weather-app.png"),
+    image: withBase("resources/images/weather-app.webp"),
     imageAlt: "RESTful Weather API interface",
     linkLabel: "View on GitHub",
   },
+];
+
+const projectId = (title) =>
+  `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
+
+const experiences = [
+  {
+    id: "exp-quantori",
+    logo: withBase("resources/images/quantori_logo.jpeg"),
+    logoAlt: "Quantori Logo",
+    title: "Python Software Developer (Remote)",
+    shortTitle: "Python Developer · Quantori",
+    start: "Mar 2026",
+    paragraphs: [],
+  },
+  {
+    id: "exp-quantori-bootcamp",
+    logo: withBase("resources/images/quantori_logo.jpeg"),
+    logoAlt: "Quantori Logo",
+    title: "Python Cloud Architect Bootcamp (Remote)",
+    shortTitle: "Cloud Architect Bootcamp · Quantori",
+    start: "Sept 2025",
+    end: "Mar 2026",
+    paragraphs: [
+      "I'm taking part in a Quantori bootcamp focused on modern Python and cloud fundamentals. Each week I'm joining deep-dive lectures and labs covering Docker, Kubernetes, databases, messaging, testing, and deployment patterns—always tying concepts back to real-world workflows.",
+      "I'm submitting biweekly projects that go beyond plain coding drills. Every assignment is framed around a practical theme, so I'm practicing design, documentation, and testing alongside the implementation. This keeps me building production-minded solutions instead of toy examples.",
+      "As a pet project, I'm developing a Cheminformatics API that lets users run molecular substructure searches. I'm enforcing strict request validation, adding caching for hot queries, and offloading heavy computations to async workers to keep the API responsive. I'm containerizing the whole stack, deploying behind a load balancer, and instrumenting logs so performance and reliability are continuously monitored.",
+      "Overall, I'm strengthening end-to-end skills—writing clean Python services, packaging them with containers, and delivering features with an eye for scalability, resilience, and developer experience.",
+    ],
+  },
+  {
+    id: "exp-gakvetili",
+    logo: withBase("resources/images/gakvetili_logo.jpg"),
+    logoAlt: "Gakvetili.ge logo",
+    title: "CTO, Tech Lead (Tbilisi, Georgia)",
+    shortTitle: "CTO & Tech Lead · Gakvetili.ge",
+    start: "June 2025",
+    paragraphs: [
+      "I'm leading the build of Memora, an online platform for private tutors and students, owning the backend and delivery end-to-end. I'm keeping the stack lean, releases frequent, and the UX snappy.",
+      "I'm bootstrapping a Spring Boot 3 monorepo, wiring CI/CD, and running Postgres/Redis. I'm shipping secure JWT auth with email verification and feature-flagged social login, while designing the core domain—tutors, listings, availability, bookings, payments, and reviews. I'm building fast search, generating slots, and driving a hold-then-pay booking flow with refunds and recurring lessons.",
+      "On AWS, I'm containerizing to ECR and running on ECS Fargate with RDS, S3 (signed URLs), CloudFront, and WAF. I'm adding observability with CloudWatch and Micrometer/Prometheus, and I'm maintaining automated backups and recovery drills.",
+      "I'm delivering reliable notifications with an outbox + MQ and integrating Google Meet so confirmed bookings are getting join links. I'm rolling out an admin review panel with RBAC, rate limits, PII scoping, and audit trails—keeping costs low while moving fast.",
+    ],
+  },
+  {
+    id: "exp-mziuri",
+    logo: withBase("resources/images/mziuri.jpg"),
+    logoAlt: "MZIURI logo",
+    title: "Java Teacher at MZIURI (Remote)",
+    shortTitle: "Java Teacher · MZIURI",
+    start: "Sept 2023",
+    paragraphs: [
+      "I'm teaching Java to kids and teens at MZIURI School, focusing on problem-solving, clean coding habits, and the core concepts of programming. My classes keep things practical and fun, with lots of hands-on exercises and real examples.",
+      "By the end of the course, students are designing and building their own small Java projects—typically desktop apps packaged as runnable JARs. Along the way they learn OOP, collections, error handling, basic testing, and how to structure code they can actually maintain.",
+      "Day to day, I'm planning and explaining each lesson clearly, assigning and grading homework almost every class, and giving targeted feedback so students improve quickly. I also curate engaging Java resources, sample code, and mini-challenges to keep motivation high.",
+      "Because high-quality Java materials in Georgian are hard to find, I'm actively writing and publishing free, Georgian-language Java content so learners (and other teachers) have accessible, local resources they can rely on.",
+    ],
+  },
+  {
+    id: "exp-epam-junior",
+    logo: withBase("resources/images/epam-logo.jpeg"),
+    logoAlt: "EPAM Systems logo",
+    title: "Junior Java Developer at EPAM Systems (Remote)",
+    shortTitle: "Junior Java Developer · EPAM",
+    start: "Jul 2024",
+    end: "Oct 2024",
+    paragraphs: [
+      "Built a serverless gym management app using AWS Lambda, API Gateway, DynamoDB, and Cognito for secure and scalable operations.",
+    ],
+  },
+  {
+    id: "exp-epam-intern",
+    logo: withBase("resources/images/epam-logo.jpeg"),
+    logoAlt: "EPAM Systems logo",
+    title: "Java Backend Intern at EPAM Systems (Remote)",
+    shortTitle: "Java Backend Intern · EPAM",
+    start: "Jan 2024",
+    end: "Jul 2024",
+    paragraphs: [
+      "Developed a scalable Java backend application utilizing Spring under the guidance of senior developers, gaining hands-on experience in building robust enterprise solutions.",
+    ],
+  },
+];
+
+// Where each skill shows up. Ids point at experience items and project cards
+// on this page; the skills explorer turns them into jump links.
+const gym = projectId("Gym Management application");
+const university = projectId("University Management System");
+const todo = projectId("ToDo REST API");
+const weather = projectId("RESTful Weather API");
+const gakvetiliProject = projectId("Gakvetili.ge");
+const newLegal = projectId("New Legal Group");
+
+const skillGroups = [
+  {
+    label: "Java Development",
+    skills: [
+      { name: "Java SE/EE", usedIn: ["exp-gakvetili", "exp-mziuri", "exp-epam-junior", "exp-epam-intern", gym, university, todo, weather] },
+      { name: "Spring Framework", usedIn: ["exp-epam-intern", university] },
+      { name: "Spring Boot", usedIn: ["exp-gakvetili", gakvetiliProject] },
+      { name: "Spring Security", usedIn: ["exp-gakvetili"] },
+      { name: "Maven", usedIn: [] },
+      { name: "JUnit", usedIn: ["exp-mziuri"] },
+      { name: "Mockito", usedIn: [] },
+      { name: "REST", usedIn: ["exp-gakvetili", todo, weather] },
+      { name: "Microservices", usedIn: [gym] },
+    ],
+  },
+  {
+    label: "Python Development",
+    skills: [
+      { name: "Core Python", usedIn: ["exp-quantori", "exp-quantori-bootcamp"] },
+      { name: "FastAPI", usedIn: ["exp-quantori-bootcamp"] },
+      { name: "Pandas", usedIn: [] },
+      { name: "NumPy", usedIn: [] },
+      { name: "Pytest", usedIn: ["exp-quantori-bootcamp"] },
+    ],
+  },
+  {
+    label: "Web Development",
+    skills: [
+      { name: "HTML", usedIn: [newLegal] },
+      { name: "CSS", usedIn: [newLegal] },
+      { name: "JavaScript", usedIn: [newLegal] },
+      { name: "React", usedIn: [] },
+      { name: "Thymeleaf", usedIn: [university] },
+      { name: "HTTP", usedIn: [] },
+      { name: "Tomcat", usedIn: [] },
+      { name: "JSON", usedIn: [] },
+      { name: "XML", usedIn: [] },
+    ],
+  },
+  {
+    label: "Cloud Computing",
+    skills: [
+      { name: "AWS", usedIn: ["exp-gakvetili", "exp-epam-junior", gym] },
+      { name: "EC2", usedIn: [] },
+      { name: "ECS", usedIn: ["exp-gakvetili"] },
+      { name: "S3", usedIn: ["exp-gakvetili"] },
+      { name: "Lambda", usedIn: ["exp-epam-junior"] },
+      { name: "IAM", usedIn: [] },
+      { name: "VPC", usedIn: [] },
+      { name: "ALB", usedIn: ["exp-quantori-bootcamp"] },
+      { name: "Serverless", usedIn: ["exp-epam-junior"] },
+      { name: "AWS Syndicate", usedIn: ["exp-epam-junior"] },
+      { name: "Docker", usedIn: ["exp-quantori-bootcamp", "exp-gakvetili"] },
+      { name: "Containerization", usedIn: ["exp-quantori-bootcamp", "exp-gakvetili"] },
+    ],
+  },
+  {
+    label: "Version Control",
+    skills: [
+      { name: "Git", usedIn: [] },
+      { name: "GitHub", usedIn: [gym, university, todo, weather] },
+      { name: "GitLab", usedIn: [] },
+    ],
+  },
+  {
+    label: "Database Management",
+    skills: [
+      { name: "MySQL", usedIn: [] },
+      { name: "PostgreSQL", usedIn: ["exp-gakvetili"] },
+      { name: "MongoDB", usedIn: [] },
+      { name: "DynamoDB", usedIn: ["exp-epam-junior"] },
+      { name: "JDBC", usedIn: [] },
+      { name: "JPA", usedIn: [] },
+      { name: "Hibernate", usedIn: [] },
+      { name: "Flyway", usedIn: [] },
+      { name: "Alembic", usedIn: [] },
+    ],
+  },
+];
+
+const skillPlaces = Object.fromEntries([
+  ...experiences.map((experience) => [experience.id, { label: experience.shortTitle, kind: "Role" }]),
+  ...projects.map((project) => [projectId(project.title), { label: project.title, kind: "Project" }]),
+]);
+
+const email = "david.maisuradze0920@gmail.com";
+const resumeHref = withBase("resources/files/David Maisuradze Resume.pdf");
+const blogPosts = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((left, right) => right.data.pubDate.valueOf() - left.data.pubDate.valueOf());
+
+const paletteSections = [
+  ["home", "Home", "fa-solid fa-house"],
+  ["about", "About me", "fa-solid fa-user"],
+  ["now", "What I'm doing now", "fa-solid fa-seedling"],
+  ["skills", "Skills", "fa-solid fa-screwdriver-wrench"],
+  ["experience", "Experience", "fa-solid fa-briefcase"],
+  ["projects", "Projects", "fa-solid fa-layer-group"],
+  ["education", "Education", "fa-solid fa-graduation-cap"],
+  ["academic", "Research & conferences", "fa-solid fa-flask"],
+  ["contact", "Contact", "fa-solid fa-paper-plane"],
+];
+
+const terminalData = {
+  email,
+  resume: resumeHref,
+  about: [
+    "Hello, I'm David Maisuradze, a passionate Java Developer based in Tbilisi, Georgia. I specialize in building scalable applications using Spring and Spring Boot, with a strong focus on crafting robust RESTful APIs and microservices architectures. My expertise in Hibernate and AWS integration has enabled me to deliver full-stack projects and develop secure, high-performance software solutions.",
+    "My professional journey includes mentoring young talents as a Java Teacher, where I help students build their programming skills through hands-on projects. I have also contributed as a Junior Java Developer at EPAM Systems, where I built serverless applications and honed my skills during an internship developing scalable backend systems.",
+  ],
+  now: "I'm currently working at Quantori as a Python Software Developer. At the same time, I'm building the Gakvetili.ge backend with Java and Spring Boot, and learning a lot through the project. I'm also on the final steps of my bachelor's thesis.",
+  projects: projects.map((project) => ({ ...project, id: projectId(project.title) })),
+  experiences,
+  skills: skillGroups,
+  places: skillPlaces,
+  posts: blogPosts.map((post) => ({
+    slug: post.id.replace(/\.mdx?$/, ""),
+    title: post.data.title,
+    description: post.data.description,
+    date: post.data.pubDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+    href: withBase(`blog/${post.id.replace(/\.mdx?$/, "")}/`),
+  })),
+};
+
+const paletteItems = [
+  ...paletteSections.map(([id, label, icon]) => ({
+    id: `section-${id}`,
+    group: "Go to",
+    label,
+    icon,
+    keywords: id,
+    action: { type: "section", value: id },
+  })),
+  ...projects.map((project) => ({
+    id: projectId(project.title),
+    group: "Projects",
+    label: project.title,
+    hint: project.kicker,
+    icon: "fa-solid fa-layer-group",
+    keywords: project.highlights.join(" "),
+    action: { type: "project", value: projectId(project.title) },
+  })),
+  {
+    id: "blog",
+    group: "Writing",
+    label: "All posts",
+    icon: "fa-solid fa-pen-nib",
+    keywords: "blog articles writing",
+    action: { type: "link", value: withBase("blog/") },
+  },
+  ...blogPosts.map((post) => ({
+    id: `post-${post.id}`,
+    group: "Writing",
+    label: post.data.title,
+    hint: post.data.pubDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+    icon: "fa-regular fa-file-lines",
+    keywords: `${post.data.tags.join(" ")} blog post`,
+    action: { type: "link", value: withBase(`blog/${post.id.replace(/\.mdx?$/, "")}/`) },
+  })),
+  {
+    id: "terminal",
+    group: "Fun",
+    label: "Open the terminal",
+    hint: "`",
+    icon: "fa-solid fa-terminal",
+    keywords: "shell console cli bash command line",
+    action: { type: "terminal" },
+  },
+  {
+    id: "copy-email",
+    group: "Contact",
+    label: "Copy email address",
+    hint: email,
+    icon: "fa-regular fa-copy",
+    keywords: "mail clipboard",
+    action: { type: "copy", value: email },
+  },
+  {
+    id: "send-email",
+    group: "Contact",
+    label: "Send me an email",
+    icon: "fa-regular fa-envelope",
+    keywords: "mail write",
+    action: { type: "link", value: `mailto:${email}` },
+  },
+  {
+    id: "resume",
+    group: "Contact",
+    label: "Download résumé",
+    hint: "PDF",
+    icon: "fa-solid fa-file-arrow-down",
+    keywords: "resume cv pdf",
+    action: { type: "download", value: resumeHref },
+  },
+  {
+    id: "github",
+    group: "Contact",
+    label: "GitHub",
+    hint: "@DUT1K1",
+    icon: "fa-brands fa-github",
+    keywords: "code repositories",
+    action: { type: "external", value: "https://github.com/DUT1K1" },
+  },
+  {
+    id: "linkedin",
+    group: "Contact",
+    label: "LinkedIn",
+    icon: "fa-brands fa-linkedin",
+    keywords: "profile",
+    action: { type: "external", value: "https://www.linkedin.com/in/david-maisuradze2004/" },
+  },
+  {
+    id: "java-course",
+    group: "Contact",
+    label: "Free Java course (Georgian)",
+    hint: "Notion",
+    icon: "fa-brands fa-java",
+    keywords: "teaching learn notion",
+    action: {
+      type: "external",
+      value: "https://opalescent-hub-1c1.notion.site/13fe260c066180d79b4dc85eb505f47f",
+    },
+  },
+  ...skillGroups.flatMap((group) =>
+    group.skills.map((skill) => ({
+      id: `skill-${skill.name}`,
+      group: "Skills",
+      label: skill.name,
+      hint: skill.usedIn.length ? `used in ${skill.usedIn.length}` : group.label,
+      icon: "fa-solid fa-tag",
+      keywords: group.label,
+      action: { type: "skill", value: skill.name },
+    }))
+  ),
 ];
 ---
 
@@ -205,36 +535,63 @@ const projects = [
     <main id="main-content">
       <!-- Home Section -->
       <section id="home" class="container hero-section reveal" aria-labelledby="home-title">
-        <div class="about">
-          <div class="avatar">
-            <img
-              src={withBase("resources/images/prof-pic.png")}
-              alt="Portrait of Davit Maisuradze"
-              width="251"
-              height="251"
-              decoding="async"
-              fetchpriority="high"
-            />
-          </div>
-          <div class="about-text">
+        <canvas class="hero-field" aria-hidden="true" data-hero-field></canvas>
+        <div class="hero">
+          <div class="hero-copy">
             <p class="eyebrow">Software developer · Tech lead · Educator</p>
             <h1 id="home-title">Hi, I'm <span>Davit Maisuradze</span></h1>
-            <p>
+            <p class="hero-lead">
               I'm the CTO and Tech Lead at <a class="gakvetili-link" href="https://gakvetili.ge"
                 target="_blank" rel="noopener noreferrer">Gakvetili.ge</a
               >, and I also work as a
               Python Software Developer at Quantori.
             </p>
+
+            <div class="about-btn">
+              <a href="#contact" class="btn-primary">Get In Touch</a>
+              <a href={resumeHref} download class="btn-secondary"
+                >Download Resume <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a
+              >
+            </div>
+
+            <ul class="hero-meta">
+              <li>
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                <span>Tbilisi, Georgia</span>
+                <span class="hero-clock" data-local-time hidden>
+                  · <time data-local-time-value></time>
+                  <span class="hero-clock-note" data-local-time-note></span>
+                </span>
+              </li>
+              <li class="hero-palette-hint">
+                <button type="button" class="kbd-hint" data-cmdk-open>
+                  <span>Jump anywhere</span>
+                  <kbd data-mod-key>⌘</kbd><kbd>K</kbd>
+                </button>
+                <button type="button" class="kbd-hint" data-term-open>
+                  <span>Terminal</span>
+                  <kbd>`</kbd>
+                </button>
+              </li>
+            </ul>
           </div>
 
-          <div class="about-btn">
-            <a href="#contact" class="btn-primary">Get In Touch</a>
-            <a
-              href={withBase("resources/files/David Maisuradze Resume.pdf")}
-              download
-              class="btn-secondary"
-              >Download Resume <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a
-            >
+          <div class="hero-visual">
+            <div class="avatar" data-avatar-tilt>
+              <img
+                src={withBase("resources/images/prof-pic.webp")}
+                alt="Portrait of Davit Maisuradze"
+                width="251"
+                height="251"
+                decoding="async"
+                fetchpriority="high"
+                draggable="false"
+              />
+            </div>
+            <a class="hero-status" href="#now">
+              <span class="hero-status-dot" aria-hidden="true"></span>
+              Currently building <strong>Gakvetili.ge</strong>
+            </a>
           </div>
         </div>
       </section>
@@ -290,233 +647,70 @@ const projects = [
 
     <section id="skills" class="container reveal" aria-labelledby="skills-title">
       <h2 id="skills-title" class="primary-heading">Skills</h2>
-      <div class="skills-rows">
-        <div class="skills-row">
-          <div class="skills-label">Java Development</div>
-          <div class="skills-grid">
-            <span class="skill-chip"><span>Java SE/EE</span></span>
-            <span class="skill-chip"><span>Spring Framework</span></span>
-            <span class="skill-chip"><span>Spring Boot</span></span>
-            <span class="skill-chip"><span>Spring Security</span></span>
-            <span class="skill-chip"><span>Maven</span></span>
-            <span class="skill-chip"><span>JUnit</span></span>
-            <span class="skill-chip"><span>Mockito</span></span>
-            <span class="skill-chip"><span>REST</span></span>
-            <span class="skill-chip"><span>Microservices</span></span>
-          </div>
-        </div>
-        <div class="skills-row">
-          <div class="skills-label">Python Development</div>
-          <div class="skills-grid">
-            <span class="skill-chip"><span>Core Python</span></span>
-            <span class="skill-chip"><span>FastAPI</span></span>
-            <span class="skill-chip"><span>Pandas</span></span>
-            <span class="skill-chip"><span>NumPy</span></span>
-            <span class="skill-chip"><span>Pytest</span></span>
-          </div>
-        </div>
-        <div class="skills-row">
-          <div class="skills-label">Web Development</div>
-          <div class="skills-grid">
-            <span class="skill-chip"><span>HTML</span></span>
-            <span class="skill-chip"><span>CSS</span></span>
-            <span class="skill-chip"><span>JavaScript</span></span>
-            <span class="skill-chip"><span>React</span></span>
-            <span class="skill-chip"><span>Thymeleaf</span></span>
-            <span class="skill-chip"><span>HTTP</span></span>
-            <span class="skill-chip"><span>Tomcat</span></span>
-            <span class="skill-chip"><span>JSON</span></span>
-            <span class="skill-chip"><span>XML</span></span>
-          </div>
-        </div>
-        <div class="skills-row">
-          <div class="skills-label">Cloud Computing</div>
-          <div class="skills-grid">
-            <span class="skill-chip"><span>AWS</span></span>
-            <span class="skill-chip"><span>EC2</span></span>
-            <span class="skill-chip"><span>ECS</span></span>
-            <span class="skill-chip"><span>S3</span></span>
-            <span class="skill-chip"><span>Lambda</span></span>
-            <span class="skill-chip"><span>IAM</span></span>
-            <span class="skill-chip"><span>VPC</span></span>
-            <span class="skill-chip"><span>ALB</span></span>
-            <span class="skill-chip"><span>Serverless</span></span>
-            <span class="skill-chip"><span>AWS Syndicate</span></span>
-            <span class="skill-chip"><span>Docker</span></span>
-            <span class="skill-chip"><span>Containerization</span></span>
-          </div>
-        </div>
-        <div class="skills-row">
-          <div class="skills-label">Version Control</div>
-          <div class="skills-grid">
-            <span class="skill-chip"><span>Git</span></span>
-            <span class="skill-chip"><span>GitHub</span></span>
-            <span class="skill-chip"><span>GitLab</span></span>
-          </div>
-        </div>
-        <div class="skills-row">
-          <div class="skills-label">Database Management</div>
-          <div class="skills-grid">
-            <span class="skill-chip"><span>MySQL</span></span>
-            <span class="skill-chip"><span>PostgreSQL</span></span>
-            <span class="skill-chip"><span>MongoDB</span></span>
-            <span class="skill-chip"><span>DynamoDB</span></span>
-            <span class="skill-chip"><span>JDBC</span></span>
-            <span class="skill-chip"><span>JPA</span></span>
-            <span class="skill-chip"><span>Hibernate</span></span>
-            <span class="skill-chip"><span>Flyway</span></span>
-            <span class="skill-chip"><span>Alembic</span></span>
-          </div>
-        </div>
-      </div>
+      <SkillsExplorer groups={skillGroups} places={skillPlaces} />
     </section>
 
     <!-- Experience Section -->
     <section id="experience" class="container reveal" aria-labelledby="experience-title">
       <h2 id="experience-title" class="primary-heading heading-experience">Experience</h2>
-      
-      <!-- Python software developer in Quantori -->
-      <div class="experience-item experience-item-current">
-        <div class="experience-header">
-          <div class="experience-left">
-            <img
-              src={withBase("resources/images/quantori_logo.jpeg")}
-              alt="Quantori Logo"
-              class="company-logo"
-              loading="lazy"
-            />
-            <span class="experience-title"
-              >Python Software Developer (Remote)</span
-            >
-          </div>
-          <div class="date">Mar 2026 – <span class="present-label">Present</span></div>
-        </div>
-      </div>
 
-      <!-- Python cloud architect bootcamp in Quantori -->
-      <div class="experience-item">
-        <div class="experience-header">
-          <div class="experience-left">
-            <img
-              src={withBase("resources/images/quantori_logo.jpeg")}
-              alt="Quantori Logo"
-              class="company-logo"
-              loading="lazy"
-            />
-            <span class="experience-title"
-              >Python Cloud Architect Bootcamp (Remote)</span
-            >
-          </div>
-          <div class="date">Sept 2025 – Mar 2026</div>
-        </div>
-        <p>
-          I'm taking part in a Quantori bootcamp focused on modern Python and cloud fundamentals. Each week I'm joining deep-dive lectures and labs covering Docker, Kubernetes, databases, messaging, testing, and deployment patterns—always tying concepts back to real-world workflows.<br><br>
-
-          I'm submitting biweekly projects that go beyond plain coding drills. Every assignment is framed around a practical theme, so I'm practicing design, documentation, and testing alongside the implementation. This keeps me building production-minded solutions instead of toy examples.<br><br>
-
-          As a pet project, I'm developing a Cheminformatics API that lets users run molecular substructure searches. I'm enforcing strict request validation, adding caching for hot queries, and offloading heavy computations to async workers to keep the API responsive. I'm containerizing the whole stack, deploying behind a load balancer, and instrumenting logs so performance and reliability are continuously monitored.<br><br>
-
-          Overall, I'm strengthening end-to-end skills—writing clean Python services, packaging them with containers, and delivering features with an eye for scalability, resilience, and developer experience.
+      <div class="bus">
+        <p class="bus-legend" aria-hidden="true">
+          <span><span class="bus-bit is-high">1</span> active</span>
+          <span><span class="bus-bit">0</span> past</span>
         </p>
-      </div>
 
-      <!-- Gakvetili.ge CTO tech lead -->
-      <div class="experience-item experience-item-current">
-        <div class="experience-header">
-          <div class="experience-left">
-            <img
-              src={withBase("resources/images/gakvetili_logo.jpg")}
-              alt="Gakvetili.ge logo"
-              class="company-logo"
-              loading="lazy"
-            />
-            <span class="experience-title"
-              >CTO, Tech Lead (Tbilisi, Georgia)</span
+      <ol class="timeline">
+        {experiences.map((experience) => {
+          const [lead, ...rest] = experience.paragraphs;
+          const moreId = `${experience.id}-more`;
+
+          return (
+            <li
+              id={experience.id}
+              class:list={["experience-item", { "experience-item-current": !experience.end }]}
             >
-          </div>
-          <div class="date">June 2025 – <span class="present-label">Present</span></div>
-        </div>
-        <p>
-          I'm leading the build of Memora, an online platform for private tutors and students, owning the backend and delivery end-to-end. I'm keeping the stack lean, releases frequent, and the UX snappy.<br><br>
-
-          I'm bootstrapping a Spring Boot 3 monorepo, wiring CI/CD, and running Postgres/Redis. I'm shipping secure JWT auth with email verification and feature-flagged social login, while designing the core domain—tutors, listings, availability, bookings, payments, and reviews. I'm building fast search, generating slots, and driving a hold-then-pay booking flow with refunds and recurring lessons.<br><br>
-
-          On AWS, I'm containerizing to ECR and running on ECS Fargate with RDS, S3 (signed URLs), CloudFront, and WAF. I'm adding observability with CloudWatch and Micrometer/Prometheus, and I'm maintaining automated backups and recovery drills.<br><br>
-
-          I'm delivering reliable notifications with an outbox + MQ and integrating Google Meet so confirmed bookings are getting join links. I'm rolling out an admin review panel with RBAC, rate limits, PII scoping, and audit trails—keeping costs low while moving fast.
-        </p>
-      </div>
-
-      <!-- Java Teacher at MZIURI -->
-      <div class="experience-item experience-item-current">
-        <div class="experience-header">
-          <div class="experience-left">
-            <img
-              src={withBase("resources/images/mziuri.jpg")}
-              alt="MZIURI logo"
-              class="company-logo"
-              loading="lazy"
-            />
-            <span class="experience-title"
-              >Java Teacher at MZIURI (Remote)</span
-            >
-          </div>
-          <div class="date">Sept 2023 – <span class="present-label">Present</span></div>
-        </div>
-        <p>
-          I'm teaching Java to kids and teens at MZIURI School, focusing on problem-solving, clean coding habits, and the core concepts of programming. My classes keep things practical and fun, with lots of hands-on exercises and real examples.<br><br>
-
-          By the end of the course, students are designing and building their own small Java projects—typically desktop apps packaged as runnable JARs. Along the way they learn OOP, collections, error handling, basic testing, and how to structure code they can actually maintain.<br><br>
-
-          Day to day, I'm planning and explaining each lesson clearly, assigning and grading homework almost every class, and giving targeted feedback so students improve quickly. I also curate engaging Java resources, sample code, and mini-challenges to keep motivation high.<br><br>
-
-          Because high-quality Java materials in Georgian are hard to find, I'm actively writing and publishing free, Georgian-language Java content so learners (and other teachers) have accessible, local resources they can rely on.
-        </p>
-      </div>
-
-      <!-- Junior Java Developer at EPAM Systems -->
-      <div class="experience-item">
-        <div class="experience-header">
-          <div class="experience-left">
-            <img
-              src={withBase("resources/images/epam-logo.jpeg")}
-              alt="EPAM Systems logo"
-              class="company-logo"
-              loading="lazy"
-            />
-            <span class="experience-title"
-              >Junior Java Developer at EPAM Systems (Remote)</span
-            >
-          </div>
-          <div class="date">Jul 2024 – Oct 2024</div>
-        </div>
-        <p>
-          Built a serverless gym management app using AWS Lambda, API Gateway,
-          DynamoDB, and Cognito for secure and scalable operations.
-        </p>
-      </div>
-
-      <!-- Java Backend Intern at EPAM Systems -->
-      <div class="experience-item">
-        <div class="experience-header">
-          <div class="experience-left">
-            <img
-              src={withBase("resources/images/epam-logo.jpeg")}
-              alt="EPAM Systems logo"
-              class="company-logo"
-              loading="lazy"
-            />
-            <span class="experience-title"
-              >Java Backend Intern at EPAM Systems (Remote)</span
-            >
-          </div>
-          <div class="date">Jan 2024 – Jul 2024</div>
-        </div>
-        <p>
-          Developed a scalable Java backend application utilizing Spring under
-          the guidance of senior developers, gaining hands-on experience in
-          building robust enterprise solutions.
-        </p>
+              <span class="bit-cell" aria-hidden="true">{experience.end ? 0 : 1}</span>
+              <span class="bit-wire" aria-hidden="true"></span>
+              <div class="experience-header">
+                <div class="experience-left">
+                  <img draggable="false"
+                    src={experience.logo}
+                    alt={experience.logoAlt}
+                    class="company-logo"
+                    loading="lazy"
+                  />
+                  <span class="experience-title">{experience.title}</span>
+                </div>
+                <div class="date">
+                  {experience.start} – {experience.end ?? <span class="present-label">Present</span>}
+                </div>
+              </div>
+              {lead && <p>{lead}</p>}
+              {rest.length > 0 && (
+                <>
+                  <div class="experience-more" id={moreId} data-experience-more>
+                    <div class="experience-more-inner">
+                      {rest.map((paragraph) => <p>{paragraph}</p>)}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="experience-toggle"
+                    aria-expanded="false"
+                    aria-controls={moreId}
+                    data-experience-toggle
+                  >
+                    <span class="experience-toggle-label" data-label-closed>Read more</span>
+                    <span class="experience-toggle-label" data-label-open>Show less</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                  </button>
+                </>
+              )}
+            </li>
+          );
+        })}
+      </ol>
       </div>
     </section>
 
@@ -557,7 +751,7 @@ const projects = [
       <div class="experience-item">
           <div class="experience-header">
             <div class="experience-left">
-              <img
+              <img draggable="false"
                 src={withBase("resources/images/kiu.jpeg")}
                 alt="Kutaisi International University logo"
                 class="company-logo"
@@ -585,7 +779,7 @@ const projects = [
       <div class="experience-item">
         <div class="experience-header">
           <div class="experience-left">
-            <img
+            <img draggable="false"
               src={withBase("resources/images/kiu.jpeg")}
               alt="Kutaisi International University logo"
               class="company-logo"
@@ -647,9 +841,15 @@ const projects = [
 
       <div class="contact-email">
         <i class="fa-solid fa-envelope email-icon" aria-hidden="true"></i>
-        <a href="mailto:david.maisuradze0920@gmail.com" class="email-link"
-          >david.maisuradze0920@gmail.com</a
-        >
+        <a href={`mailto:${email}`} class="email-link">{email}</a>
+        <button type="button" class="copy-button" data-copy={email} aria-label="Copy email address">
+          <span class="copy-button-state copy-button-idle">
+            <i class="fa-regular fa-copy" aria-hidden="true"></i> Copy
+          </span>
+          <span class="copy-button-state copy-button-done" aria-hidden="true">
+            <i class="fa-solid fa-check" aria-hidden="true"></i> Copied
+          </span>
+        </button>
       </div>
 
       <div class="social-links">
@@ -690,6 +890,269 @@ const projects = [
       <a href="#home">Back to top <i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a>
     </footer>
 
+    <CommandPalette items={paletteItems} searchOnlyGroups={["Skills"]} />
+    <TerminalMode data={terminalData} />
+
     <script is:inline src={withBase("scripts.js")}></script>
+    <script>
+      import { copyText, showToast } from "../scripts/home-ui.js";
+      import { createHeroField } from "../scripts/hero-field.js";
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      // Keep the reading position across reloads. The browser restores a raw
+      // pixel offset before the scripts reshape the page (the skills map, the
+      // collapsed experience entries), so it lands a little lower every time.
+      // Instead, remember which section was at the top and how far into it,
+      // and restore that once the layout has settled.
+      const SCROLL_KEY = "home-scroll";
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
+      // offsetTop ignores the reveal animation's transform, unlike getBoundingClientRect.
+      const documentTop = (element) => {
+        let top = 0;
+        for (let node = element; node instanceof HTMLElement; node = node.offsetParent) {
+          top += node.offsetTop;
+        }
+        return top;
+      };
+
+      window.addEventListener("pagehide", () => {
+        const sections = Array.from(document.querySelectorAll("main > section[id]"));
+        const anchor = sections.filter((section) => documentTop(section) <= window.scrollY + 1).at(-1);
+        try {
+          sessionStorage.setItem(
+            SCROLL_KEY,
+            JSON.stringify(anchor ? { id: anchor.id, offset: window.scrollY - documentTop(anchor) } : { id: null, offset: 0 })
+          );
+        } catch {
+          // Private mode or blocked storage: the page simply opens at the top.
+        }
+      });
+
+      const restoreScroll = () => {
+        let saved = null;
+        try {
+          saved = JSON.parse(sessionStorage.getItem(SCROLL_KEY) ?? "null");
+        } catch {
+          saved = null;
+        }
+        const navigation = performance.getEntriesByType("navigation")[0];
+        const isReload = navigation?.type === "reload" || navigation?.type === "back_forward";
+
+        if (saved && isReload) {
+          const anchor = saved.id ? document.getElementById(saved.id) : null;
+          const top = anchor ? documentTop(anchor) + saved.offset : 0;
+          window.scrollTo({ top, behavior: "instant" });
+        } else if (location.hash) {
+          document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ behavior: "instant" });
+        }
+      };
+
+      // Wait for fonts and the widgets' first layout before measuring.
+      Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((resolve) => setTimeout(resolve, 600))]).then(() =>
+        requestAnimationFrame(() => requestAnimationFrame(restoreScroll))
+      );
+
+      const heroCanvas = document.querySelector("[data-hero-field]");
+      const heroField =
+        heroCanvas instanceof HTMLCanvasElement
+          ? createHeroField(heroCanvas, {
+              reducedMotion: reducedMotion.matches,
+              // The intro's ordering wave starts from the portrait.
+              origin: () => {
+                const portrait = document.querySelector("[data-avatar-tilt]");
+                if (!portrait) return null;
+                const canvasRect = heroCanvas.getBoundingClientRect();
+                const rect = portrait.getBoundingClientRect();
+                return {
+                  x: rect.left + rect.width / 2 - canvasRect.left,
+                  y: rect.top + rect.height / 2 - canvasRect.top,
+                };
+              },
+            })
+          : null;
+
+      // Easter egg: the Konami code (or `supra` in the terminal) raises a toast,
+      // Georgian style. The hero's dots regroup into "hello" in flag red.
+      const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+      let konamiIndex = 0;
+      let georgianFontRequested = false;
+
+      const supra = () => {
+        if (!georgianFontRequested) {
+          georgianFontRequested = true;
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = `https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@800&display=swap&text=${encodeURIComponent("გამარჯობა")}`;
+          document.head.append(link);
+        }
+        const hero = document.getElementById("home");
+        hero?.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "start" });
+        hero?.classList.add("is-supra");
+        window.setTimeout(() => hero?.classList.remove("is-supra"), 6500);
+        void heroField?.spell("გამარჯობა", 6500);
+        showToast("გამარჯობა! You found the supra. გაუმარჯოს! 🍷", "fa-wine-glass", 6000);
+      };
+
+      document.addEventListener("easter:supra", supra);
+      document.addEventListener("keydown", (event) => {
+        const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+        konamiIndex = key === KONAMI[konamiIndex] ? konamiIndex + 1 : key === KONAMI[0] ? 1 : 0;
+        if (konamiIndex === KONAMI.length) {
+          konamiIndex = 0;
+          supra();
+        }
+      });
+
+      // Live local time in Tbilisi, with how far ahead or behind the visitor is.
+      const clock = document.querySelector("[data-local-time]");
+      const clockValue = document.querySelector("[data-local-time-value]");
+      const clockNote = document.querySelector("[data-local-time-note]");
+      const tbilisiTime = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Tbilisi",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const tbilisiHour = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Tbilisi",
+        hour: "numeric",
+        hourCycle: "h23",
+      });
+
+      const describeOffset = (now) => {
+        // Tbilisi is UTC+4 all year.
+        const difference = 240 + now.getTimezoneOffset();
+        if (difference === 0) return "same time as you";
+        const hours = Math.abs(difference) / 60;
+        const amount = Number.isInteger(hours) ? `${hours}h` : `${hours.toFixed(1)}h`;
+        return `${amount} ${difference > 0 ? "ahead of" : "behind"} you`;
+      };
+
+      const tickClock = () => {
+        if (!clock || !clockValue || !clockNote) return;
+        const now = new Date();
+        const hour = Number(tbilisiHour.format(now));
+        clockValue.textContent = tbilisiTime.format(now);
+        clockValue.dateTime = now.toISOString();
+        clockNote.textContent =
+          hour >= 1 && hour < 7 ? "(probably asleep)" : `(${describeOffset(now)})`;
+        clock.hidden = false;
+      };
+
+      tickClock();
+      window.setInterval(tickClock, 30_000);
+
+      // Experience: long entries open in place.
+      document.querySelectorAll("[data-experience-toggle]").forEach((toggle) => {
+        const panel = document.getElementById(toggle.getAttribute("aria-controls") ?? "");
+        if (!panel) return;
+        panel.inert = true;
+
+        toggle.addEventListener("click", () => {
+          const isOpen = toggle.getAttribute("aria-expanded") !== "true";
+          toggle.setAttribute("aria-expanded", String(isOpen));
+          panel.classList.toggle("is-open", isOpen);
+          panel.inert = !isOpen;
+
+          // Collapsing from far down the entry would otherwise leave the visitor
+          // stranded below it.
+          if (!isOpen) {
+            const item = toggle.closest(".experience-item");
+            const top = item?.getBoundingClientRect().top ?? 0;
+            if (item && top < 0) {
+              item.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "start" });
+            }
+          }
+        });
+      });
+
+      // Experience bus: each role is a bit (1 = active, 0 = past). The bus
+      // line runs from the top of the list to the last bit, so measure where
+      // that bit sits; "Read more" moves it, hence the observer.
+      const timeline = document.querySelector(".timeline");
+      const bus = document.querySelector(".bus");
+      if (timeline instanceof HTMLElement && bus instanceof HTMLElement) {
+        const lastLogo = timeline.querySelector(":scope > .experience-item:last-child .company-logo");
+        const measure = () => {
+          if (!lastLogo) return;
+          // Both rects share any reveal transform, so the difference is exact.
+          const logoRect = lastLogo.getBoundingClientRect();
+          const length = logoRect.top + logoRect.height / 2 - timeline.getBoundingClientRect().top;
+          bus.style.setProperty("--rail-length", `${Math.max(1, length)}px`);
+        };
+        measure();
+        new ResizeObserver(measure).observe(timeline);
+      }
+
+      // Copy email: the button morphs to a confirmation, then settles back.
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        let resetTimer;
+        button.addEventListener("click", async () => {
+          const copied = await copyText(button.dataset.copy ?? "");
+          if (!copied) {
+            showToast("Couldn't reach the clipboard", "fa-triangle-exclamation");
+            return;
+          }
+          button.classList.add("is-copied");
+          button.setAttribute("aria-label", "Email address copied");
+          window.clearTimeout(resetTimer);
+          resetTimer = window.setTimeout(() => {
+            button.classList.remove("is-copied");
+            button.setAttribute("aria-label", "Copy email address");
+          }, 1800);
+        });
+      });
+
+      // Project cards: a soft light follows the pointer.
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        document.querySelectorAll(".project-card-front").forEach((card) => {
+          card.addEventListener("pointermove", (event) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
+            card.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
+          });
+        });
+      }
+
+      // Portrait: a gentle tilt toward the pointer, eased so it trails a little.
+      const avatar = document.querySelector("[data-avatar-tilt]");
+      if (
+        avatar instanceof HTMLElement &&
+        !reducedMotion.matches &&
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches
+      ) {
+        const hero = avatar.closest(".hero-section");
+        let target = { x: 0, y: 0 };
+        let current = { x: 0, y: 0 };
+        let frame = 0;
+
+        const step = () => {
+          current.x += (target.x - current.x) * 0.12;
+          current.y += (target.y - current.y) * 0.12;
+          avatar.style.transform = `perspective(900px) rotateX(${current.y.toFixed(2)}deg) rotateY(${current.x.toFixed(2)}deg)`;
+          const settled =
+            Math.abs(target.x - current.x) < 0.01 && Math.abs(target.y - current.y) < 0.01;
+          frame = settled ? 0 : window.requestAnimationFrame(step);
+        };
+
+        const queue = () => {
+          if (!frame) frame = window.requestAnimationFrame(step);
+        };
+
+        hero?.addEventListener("pointermove", (event) => {
+          const rect = avatar.getBoundingClientRect();
+          const x = (event.clientX - (rect.left + rect.width / 2)) / window.innerWidth;
+          const y = (event.clientY - (rect.top + rect.height / 2)) / window.innerHeight;
+          target = { x: Math.max(-1, Math.min(1, x)) * 10, y: Math.max(-1, Math.min(1, -y)) * 10 };
+          queue();
+        });
+
+        hero?.addEventListener("pointerleave", () => {
+          target = { x: 0, y: 0 };
+          queue();
+        });
+      }
+    </script>
   </body>
 </html>

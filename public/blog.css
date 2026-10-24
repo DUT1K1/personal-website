@@ -1138,3 +1138,26 @@ html[lang="ka"] .blog-post-content {
       background-color 120ms ease;
   }
 }
+
+/* Filter controls and card chrome: no stray selections. Post titles,
+   descriptions and article text stay selectable. */
+.blog-eyebrow,
+.blog-tag-row,
+.blog-clear-filters,
+.blog-results-count,
+.blog-card-meta,
+.blog-card-tags,
+.blog-card-cta,
+.blog-post-tags {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (max-width: 680px) {
+  .site-footer a,
+  .blog-footer a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+}

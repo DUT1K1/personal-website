@@ -1,0 +1,318 @@
+---
+// Each item: { id, group, label, hint?, icon, keywords?, action: { type, value } }
+// action.type is one of: section, project, skill, link, external, copy, download.
+// Items in a group listed in `searchOnlyGroups` only show up once the visitor types.
+const { items = [], searchOnlyGroups = [] } = Astro.props;
+const paletteData = { items, searchOnlyGroups };
+---
+
+<dialog class="cmdk" aria-label="Quick navigation" data-cmdk>
+  <div class="cmdk-panel">
+    <div class="cmdk-search">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input
+        type="text"
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="cmdk-list"
+        aria-autocomplete="list"
+        aria-label="Search sections, projects, posts and skills"
+        placeholder="Search sections, projects, posts, skills…"
+        autocomplete="off"
+        spellcheck="false"
+        data-cmdk-input
+      />
+      <kbd class="cmdk-esc">esc</kbd>
+    </div>
+
+    <div class="cmdk-list" id="cmdk-list" role="listbox" aria-label="Results" data-cmdk-list></div>
+    <p class="cmdk-empty" hidden data-cmdk-empty></p>
+
+    <footer class="cmdk-footer" aria-hidden="true">
+      <span><kbd>↑</kbd><kbd>↓</kbd> to move</span>
+      <span><kbd>↵</kbd> to open</span>
+      <span class="cmdk-footer-tip">Tip: type a skill like “AWS”</span>
+    </footer>
+  </div>
+</dialog>
+
+<script type="application/json" data-cmdk-items set:html={JSON.stringify(paletteData)}></script>
+
+<script>
+  import {
+    copyText,
+    isApplePlatform,
+    revealTarget,
+    showToast,
+    waitForScrollEnd,
+  } from "../scripts/home-ui.js";
+
+  const dialog = document.querySelector("[data-cmdk]");
+  const input = dialog?.querySelector("[data-cmdk-input]");
+  const list = dialog?.querySelector("[data-cmdk-list]");
+  const empty = dialog?.querySelector("[data-cmdk-empty]");
+  const dataElement = document.querySelector("[data-cmdk-items]");
+
+  if (dialog && input && list && empty && dataElement) {
+    const { items, searchOnlyGroups } = JSON.parse(dataElement.textContent ?? "{}");
+    const groupOrder = [...new Set(items.map((item) => item.group))];
+    let results = [];
+    let activeIndex = 0;
+    let returnFocus = null;
+
+    document.querySelectorAll("[data-mod-key]").forEach((key) => {
+      key.textContent = isApplePlatform() ? "⌘" : "Ctrl";
+    });
+
+    const normalize = (value) =>
+      value.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "");
+
+    // Lower is better; null means no match. Prefix beats word-start beats
+    // substring beats a loose in-order character match.
+    const score = (item, query) => {
+      const label = normalize(item.label);
+      const haystack = normalize(`${item.label} ${item.keywords ?? ""} ${item.group}`);
+
+      if (label.startsWith(query)) return 0;
+      if (label.split(/[\s·/.-]+/).some((word) => word.startsWith(query))) return 1;
+      if (label.includes(query)) return 2;
+      if (haystack.includes(query)) return 3;
+
+      let position = 0;
+      for (const character of query.replace(/\s+/g, "")) {
+        position = label.indexOf(character, position);
+        if (position === -1) return null;
+        position += 1;
+      }
+      return 4;
+    };
+
+    const filterItems = (rawQuery) => {
+      const query = normalize(rawQuery.trim());
+
+      if (!query) {
+        return items.filter((item) => !searchOnlyGroups.includes(item.group));
+      }
+
+      return items
+        .map((item, index) => ({ item, index, score: score(item, query) }))
+        .filter((entry) => entry.score !== null)
+        .sort(
+          (left, right) =>
+            groupOrder.indexOf(left.item.group) - groupOrder.indexOf(right.item.group) ||
+            left.score - right.score ||
+            left.index - right.index
+        )
+        .map((entry) => entry.item);
+    };
+
+    const setActive = (index, { scroll = true } = {}) => {
+      const options = list.querySelectorAll("[role='option']");
+      if (!options.length) {
+        input.removeAttribute("aria-activedescendant");
+        return;
+      }
+
+      activeIndex = (index + options.length) % options.length;
+      options.forEach((option, optionIndex) => {
+        option.setAttribute("aria-selected", String(optionIndex === activeIndex));
+      });
+
+      const active = options[activeIndex];
+      input.setAttribute("aria-activedescendant", active.id);
+      if (scroll) active.scrollIntoView({ block: "nearest" });
+    };
+
+    const render = () => {
+      results = filterItems(input.value);
+      list.replaceChildren();
+
+      const groups = Map.groupBy
+        ? Map.groupBy(results, (item) => item.group)
+        : results.reduce((map, item) => {
+            map.set(item.group, [...(map.get(item.group) ?? []), item]);
+            return map;
+          }, new Map());
+
+      let optionIndex = 0;
+      groups.forEach((groupItems, group) => {
+        const section = document.createElement("div");
+        section.className = "cmdk-group";
+        section.setAttribute("role", "group");
+        section.setAttribute("aria-label", group);
+
+        const heading = document.createElement("p");
+        heading.className = "cmdk-group-heading";
+        heading.setAttribute("aria-hidden", "true");
+        heading.textContent = group;
+        section.append(heading);
+
+        groupItems.forEach((item) => {
+          const option = document.createElement("div");
+          const index = optionIndex++;
+          option.className = "cmdk-item";
+          option.id = `cmdk-option-${index}`;
+          option.setAttribute("role", "option");
+          option.setAttribute("aria-selected", "false");
+          option.dataset.index = String(index);
+
+          const icon = document.createElement("span");
+          icon.className = "cmdk-item-icon";
+          icon.setAttribute("aria-hidden", "true");
+          icon.innerHTML = `<i class="${item.icon}"></i>`;
+
+          const label = document.createElement("span");
+          label.className = "cmdk-item-label";
+          label.textContent = item.label;
+
+          option.append(icon, label);
+
+          if (item.hint) {
+            const hint = document.createElement("span");
+            hint.className = "cmdk-item-hint";
+            hint.textContent = item.hint;
+            option.append(hint);
+          }
+
+          section.append(option);
+        });
+
+        list.append(section);
+      });
+
+      empty.hidden = results.length > 0;
+      if (!results.length) empty.textContent = `Nothing matches “${input.value.trim()}”.`;
+      setActive(0);
+    };
+
+    // A keyboard-summoned tool gets used constantly, so it opens and closes
+    // instantly: no transition to wait through.
+    const open = () => {
+      if (dialog.open) return;
+      returnFocus = document.activeElement;
+      input.value = "";
+      render();
+      dialog.showModal();
+      document.body.classList.add("has-cmdk");
+      input.focus();
+    };
+
+    const close = ({ restoreFocus = true } = {}) => {
+      if (!dialog.open) return;
+      dialog.close();
+      document.body.classList.remove("has-cmdk");
+      if (restoreFocus && returnFocus instanceof HTMLElement) {
+        returnFocus.focus({ preventScroll: true });
+      }
+    };
+
+    const run = async (item) => {
+      const { type, value } = item.action;
+      close({ restoreFocus: type === "copy" });
+
+      switch (type) {
+        case "section":
+          await revealTarget(value, { spotlight: false });
+          history.replaceState(null, "", `#${value}`);
+          break;
+        case "project": {
+          const card = await revealTarget(value, { spotlight: false });
+          await waitForScrollEnd();
+          card?.querySelector("[data-project-front]")?.click();
+          break;
+        }
+        case "terminal":
+          document.dispatchEvent(new CustomEvent("terminal:open"));
+          break;
+        case "skill":
+          document.dispatchEvent(new CustomEvent("skills:select", { detail: value }));
+          break;
+        case "copy":
+          showToast((await copyText(value)) ? "Email copied to clipboard" : value, "fa-envelope");
+          break;
+        case "download": {
+          const link = document.createElement("a");
+          link.href = value;
+          link.download = "";
+          link.click();
+          break;
+        }
+        case "external":
+          window.open(value, "_blank", "noopener,noreferrer");
+          break;
+        default:
+          window.location.href = value;
+      }
+    };
+
+    input.addEventListener("input", render);
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown" || (event.ctrlKey && event.key === "n")) {
+        event.preventDefault();
+        setActive(activeIndex + 1);
+      } else if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
+        event.preventDefault();
+        setActive(activeIndex - 1);
+      } else if (event.key === "Home" && !input.value) {
+        event.preventDefault();
+        setActive(0);
+      } else if (event.key === "End" && !input.value) {
+        event.preventDefault();
+        setActive(-1);
+      } else if (event.key === "Enter" && !event.isComposing) {
+        event.preventDefault();
+        const item = results[activeIndex];
+        if (item) void run(item);
+      }
+    });
+
+    list.addEventListener("pointermove", (event) => {
+      const option = event.target instanceof Element && event.target.closest("[role='option']");
+      if (option && Number(option.dataset.index) !== activeIndex) {
+        setActive(Number(option.dataset.index), { scroll: false });
+      }
+    });
+
+    list.addEventListener("click", (event) => {
+      const option = event.target instanceof Element && event.target.closest("[role='option']");
+      if (option) void run(results[Number(option.dataset.index)]);
+    });
+
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) close();
+    });
+
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      close();
+    });
+
+    const isTyping = (target) =>
+      target instanceof HTMLElement &&
+      (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+
+    document.addEventListener("keydown", (event) => {
+      const isShortcut = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k";
+      const isSlash = event.key === "/" && !isTyping(event.target);
+
+      if (!isShortcut && !isSlash) return;
+      // Leave the shortcut alone while a project dialog owns the screen.
+      if (!dialog.open && document.querySelector(".project-dialog[open]")) return;
+
+      event.preventDefault();
+      if (dialog.open) close();
+      else open();
+    });
+
+    document.addEventListener("click", (event) => {
+      const trigger = event.target instanceof Element && event.target.closest("[data-cmdk-open]");
+      if (!trigger) return;
+      event.preventDefault();
+      // The mobile menu stays open behind a modal otherwise.
+      const menuToggle = document.querySelector(".menu-toggle[aria-expanded='true']");
+      if (menuToggle instanceof HTMLElement) menuToggle.click();
+      open();
+    });
+  }
+</script>

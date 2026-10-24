@@ -1,0 +1,739 @@
+---
+// groups: [{ label, skills: [{ name, usedIn: [placeId] }] }]
+// places: { [placeId]: { label, kind } } where placeId is an element id on the page.
+const { groups = [], places = {} } = Astro.props;
+const total = groups.reduce((sum, group) => sum + group.skills.length, 0);
+const shortArea = (label) => label.replace(/ (Development|Computing|Management)$/, "");
+---
+
+<div class="skills-explorer" data-skills data-view="list">
+  <div class="skills-toolbar">
+    <div class="skills-views" role="group" aria-label="Skills view" hidden data-skills-views>
+      <span class="skills-views-thumb" aria-hidden="true" data-views-thumb></span>
+      <button type="button" aria-pressed="false" data-view-button="constellation">
+        <i class="fa-solid fa-circle-nodes" aria-hidden="true"></i> Constellation
+      </button>
+      <button type="button" aria-pressed="true" data-view-button="list">
+        <i class="fa-solid fa-list" aria-hidden="true"></i> List
+      </button>
+    </div>
+    <label class="skills-search">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <span class="sr-only">Filter skills</span>
+      <input
+        type="search"
+        placeholder="Filter skills…"
+        autocomplete="off"
+        spellcheck="false"
+        data-skills-filter
+      />
+    </label>
+    <p class="skills-hint">
+      <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
+      <span data-hint-list>Pick a skill to see where I used it</span>
+      <span data-hint-constellation>
+        <span class="hint-pointer">Drag to orbit · pinch or <kbd data-mod-key>⌘</kbd> + scroll to zoom</span>
+        <span class="hint-touch">Swipe sideways to orbit · zoom with + and −</span>
+      </span>
+    </p>
+  </div>
+
+  <div class="skills-stage" data-skills-stage>
+  <div class="constellation-shell" hidden data-constellation-shell>
+    <aside class="constellation-panel" aria-label="Find in the skill map">
+      <div class="constellation-browse" data-panel-browse>
+        <label class="constellation-search">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <span class="sr-only">Search skills, roles and projects</span>
+          <input
+            type="search"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="constellation-results"
+            aria-autocomplete="list"
+            placeholder="Search skills, roles, projects…"
+            autocomplete="off"
+            spellcheck="false"
+            data-panel-search
+          />
+        </label>
+        <div class="constellation-areas" role="group" aria-label="Skill areas">
+          {groups.map((group) => (
+            <button type="button" aria-pressed="false" data-area={`group:${group.label}`}>
+              {shortArea(group.label)}
+            </button>
+          ))}
+        </div>
+        <p class="constellation-results-heading" data-panel-heading></p>
+        <ul
+          class="constellation-results"
+          id="constellation-results"
+          role="listbox"
+          aria-label="Results"
+          data-panel-results
+        ></ul>
+      </div>
+
+      <div class="constellation-detail" hidden data-panel-detail>
+        <button type="button" class="constellation-back" data-panel-back>
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All skills
+        </button>
+        <p class="constellation-detail-kind" data-detail-kind></p>
+        <h3 class="constellation-detail-title" data-detail-title></h3>
+        <p class="constellation-detail-sub" data-detail-sub></p>
+        <button type="button" class="constellation-jump" hidden data-detail-jump>
+          See it on the page <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+        </button>
+        <p class="constellation-results-heading" data-detail-links-heading></p>
+        <ul class="constellation-links" data-detail-links></ul>
+      </div>
+    </aside>
+
+    <div
+      class="constellation"
+      role="img"
+      aria-label="3D map linking each skill to the roles and projects where it was used. The panel beside it and the list view have the same information."
+      data-constellation
+    >
+      <ul class="constellation-legend" aria-hidden="true">
+        <li><span class="is-category"></span>Area</li>
+        <li><span class="is-skill"></span>Skill</li>
+        <li><span class="is-role"></span>Role</li>
+        <li><span class="is-project"></span>Project</li>
+      </ul>
+      <div class="constellation-status" data-constellation-status>
+        <p data-status-text>Charting the stars…</p>
+        <div class="constellation-status-actions" hidden data-status-actions>
+          <button type="button" data-status-retry>Try again</button>
+          <button type="button" data-status-list>Show the list instead</button>
+        </div>
+      </div>
+      <div class="constellation-controls" role="group" aria-label="Map controls">
+        <button type="button" aria-label="Zoom in" data-map-zoom-in><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+        <button type="button" aria-label="Zoom out" data-map-zoom-out><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+        <button type="button" aria-label="Reset view" data-map-reset><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="skills-rows" data-skills-list>
+    {groups.map((group) => (
+      <div class="skills-row" data-skills-row>
+        <div class="skills-label">{group.label}</div>
+        <div class="skills-grid">
+          {group.skills.map((skill) => (
+            <button
+              type="button"
+              class="skill-chip"
+              aria-pressed="false"
+              data-skill={skill.name}
+              data-used-in={skill.usedIn.join(" ")}
+            >
+              <span>{skill.name}</span>
+              {skill.usedIn.length > 0 && (
+                <span class="skill-chip-count" aria-label={`used in ${skill.usedIn.length}`}>
+                  {skill.usedIn.length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    ))}
+    <p class="skills-empty" hidden data-skills-empty>No skills match that filter.</p>
+  </div>
+  </div>
+
+  <p class="sr-only" aria-live="polite" data-skills-status>{total} skills</p>
+
+  <div class="skill-usage" hidden data-skill-usage>
+    <p class="skill-usage-title">
+      <span data-skill-usage-name></span>
+      <span class="skill-usage-sub" data-skill-usage-sub></span>
+    </p>
+    <ul class="skill-usage-list" data-skill-usage-list></ul>
+  </div>
+</div>
+
+<script type="application/json" data-skill-places set:html={JSON.stringify(places)}></script>
+
+<script>
+  import { revealTarget } from "../scripts/home-ui.js";
+  import { buildGraph } from "../scripts/constellation.js";
+
+  const root = document.querySelector("[data-skills]");
+  const placesElement = document.querySelector("[data-skill-places]");
+
+  if (root && placesElement) {
+    const places = JSON.parse(placesElement.textContent ?? "{}");
+    const filter = root.querySelector("[data-skills-filter]");
+    const rows = Array.from(root.querySelectorAll("[data-skills-row]"));
+    const chips = Array.from(root.querySelectorAll(".skill-chip"));
+    const empty = root.querySelector("[data-skills-empty]");
+    const status = root.querySelector("[data-skills-status]");
+    const usage = root.querySelector("[data-skill-usage]");
+    const usageName = root.querySelector("[data-skill-usage-name]");
+    const usageSub = root.querySelector("[data-skill-usage-sub]");
+    const usageList = root.querySelector("[data-skill-usage-list]");
+    const kindIcons = {
+      Role: "fa-solid fa-briefcase",
+      Project: "fa-solid fa-layer-group",
+    };
+
+    const clearSelection = () => {
+      chips.forEach((chip) => chip.setAttribute("aria-pressed", "false"));
+      root.classList.remove("has-selection");
+      usage.hidden = true;
+    };
+
+    const select = (chip) => {
+      if (chip.getAttribute("aria-pressed") === "true") {
+        clearSelection();
+        return;
+      }
+
+      chips.forEach((other) => other.setAttribute("aria-pressed", String(other === chip)));
+      root.classList.add("has-selection");
+
+      const placeIds = (chip.dataset.usedIn ?? "").split(" ").filter((id) => places[id]);
+      usageName.textContent = chip.dataset.skill;
+      usageSub.textContent = placeIds.length
+        ? `shows up in ${placeIds.length} ${placeIds.length === 1 ? "place" : "places"}`
+        : "is part of my everyday toolkit";
+      usageList.replaceChildren(
+        ...placeIds.map((id, index) => {
+          const place = places[id];
+          const item = document.createElement("li");
+          item.style.setProperty("--stagger", String(index));
+          const link = document.createElement("a");
+          link.href = `#${id}`;
+          link.dataset.placeId = id;
+          link.innerHTML = `<i class="${kindIcons[place.kind] ?? "fa-solid fa-circle"}" aria-hidden="true"></i>`;
+          const label = document.createElement("span");
+          label.textContent = place.label;
+          const kind = document.createElement("span");
+          kind.className = "skill-usage-kind";
+          kind.textContent = place.kind;
+          link.append(label, kind);
+          item.append(link);
+          return item;
+        })
+      );
+
+      // Show the panel right under the row the chip lives in, so the answer
+      // appears where the visitor is looking.
+      chip.closest("[data-skills-row]")?.after(usage);
+      usage.hidden = false;
+      usage.classList.remove("is-entering");
+      void usage.offsetWidth;
+      usage.classList.add("is-entering");
+    };
+
+    root.addEventListener("click", (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const chip = target?.closest(".skill-chip");
+      if (chip) {
+        select(chip);
+        return;
+      }
+
+      const placeLink = target?.closest("[data-place-id]");
+      if (placeLink) {
+        event.preventDefault();
+        void revealTarget(placeLink.dataset.placeId);
+      }
+    });
+
+    filter?.addEventListener("input", () => {
+      const query = filter.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      rows.forEach((row) => {
+        const label = row.querySelector(".skills-label")?.textContent?.toLowerCase() ?? "";
+        const groupMatches = query && label.includes(query);
+        let rowCount = 0;
+
+        row.querySelectorAll(".skill-chip").forEach((chip) => {
+          const matches = !query || groupMatches || chip.dataset.skill.toLowerCase().includes(query);
+          chip.hidden = !matches;
+          if (matches) rowCount += 1;
+        });
+
+        row.hidden = rowCount === 0;
+        visibleCount += rowCount;
+      });
+
+      const selected = root.querySelector(".skill-chip[aria-pressed='true']");
+      if (selected?.hidden) clearSelection();
+
+      empty.hidden = visibleCount > 0;
+      status.textContent = `${visibleCount} ${visibleCount === 1 ? "skill" : "skills"}`;
+    });
+
+    filter?.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && filter.value) {
+        event.stopPropagation();
+        filter.value = "";
+        filter.dispatchEvent(new Event("input"));
+      }
+    });
+
+    // ---------- constellation view ----------
+    const viewSwitch = root.querySelector("[data-skills-views]");
+    const viewButtons = Array.from(root.querySelectorAll("[data-view-button]"));
+    const shell = root.querySelector("[data-constellation-shell]");
+    const stage = root.querySelector("[data-constellation]");
+    const list = root.querySelector("[data-skills-list]");
+    const mapStatus = root.querySelector("[data-constellation-status]");
+    const statusText = root.querySelector("[data-status-text]");
+    const statusActions = root.querySelector("[data-status-actions]");
+    const browse = root.querySelector("[data-panel-browse]");
+    const search = root.querySelector("[data-panel-search]");
+    const areaButtons = Array.from(root.querySelectorAll("[data-area]"));
+    const resultsHeading = root.querySelector("[data-panel-heading]");
+    const results = root.querySelector("[data-panel-results]");
+    const detail = root.querySelector("[data-panel-detail]");
+    const detailKind = root.querySelector("[data-detail-kind]");
+    const detailTitle = root.querySelector("[data-detail-title]");
+    const detailSub = root.querySelector("[data-detail-sub]");
+    const detailJump = root.querySelector("[data-detail-jump]");
+    const detailLinksHeading = root.querySelector("[data-detail-links-heading]");
+    const detailLinks = root.querySelector("[data-detail-links]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const kindLabels = { category: "Skill area", skill: "Skill", role: "Role", project: "Project" };
+    const kindOrder = { role: 0, project: 1, category: 2, skill: 3 };
+
+    const groups = rows.map((row) => ({
+      label: row.querySelector(".skills-label")?.textContent?.trim() ?? "",
+      skills: Array.from(row.querySelectorAll(".skill-chip")).map((chip) => ({
+        name: chip.dataset.skill,
+        usedIn: (chip.dataset.usedIn ?? "").split(" ").filter(Boolean),
+      })),
+    }));
+    // One graph feeds both the panel and the 3D scene, so the panel works
+    // instantly and keeps working even if WebGL never starts.
+    const graph = buildGraph(groups, places);
+    const skillNodes = graph.nodes.filter((node) => node.kind === "skill");
+
+    let constellation = null;
+    let constellationLoading = null;
+    let activeArea = null;
+    let resultItems = [];
+    let activeResult = -1;
+
+    const supportsWebGL = (() => {
+      try {
+        const probe = document.createElement("canvas");
+        return Boolean(probe.getContext("webgl2") || probe.getContext("webgl"));
+      } catch {
+        return false;
+      }
+    })();
+
+    const withMap = (action) => {
+      void ensureConstellation().then((instance) => instance && action(instance));
+    };
+
+    // ---------- panel: browse ----------
+    const usesText = (node) =>
+      node.kind === "skill"
+        ? node.uses ? String(node.uses) : ""
+        : node.kind === "category"
+          ? `${node.skills.length}`
+          : "";
+
+    const makeRow = (node, index, { asOption }) => {
+      const item = document.createElement("li");
+      const content = document.createElement(asOption ? "div" : "button");
+      if (asOption) {
+        item.setAttribute("role", "option");
+        item.id = `constellation-option-${index}`;
+        item.setAttribute("aria-selected", "false");
+        item.dataset.index = String(index);
+      } else {
+        content.type = "button";
+      }
+      content.className = "constellation-row";
+      const dot = document.createElement("span");
+      dot.className = `constellation-dot is-${node.kind}`;
+      const name = document.createElement("span");
+      name.className = "constellation-row-name";
+      name.textContent = node.label;
+      content.append(dot, name);
+      if (node.kind === "role" || node.kind === "project" || node.kind === "category") {
+        const kind = document.createElement("span");
+        kind.className = "constellation-row-kind";
+        kind.textContent = kindLabels[node.kind];
+        content.append(kind);
+      }
+      const count = usesText(node);
+      if (count) {
+        const badge = document.createElement("span");
+        badge.className = "constellation-row-count";
+        badge.textContent = count;
+        content.append(badge);
+      }
+      content.dataset.nodeId = node.id;
+      item.append(content);
+      return item;
+    };
+
+    const renderResults = () => {
+      const query = search.value.trim().toLowerCase();
+      let items;
+      if (query) {
+        items = graph.nodes
+          .map((node) => {
+            const label = node.label.toLowerCase();
+            const rank = label.startsWith(query) ? 0 : label.split(/[\s·/.-]+/).some((word) => word.startsWith(query)) ? 1 : label.includes(query) ? 2 : -1;
+            return { node, rank };
+          })
+          .filter((entry) => entry.rank >= 0)
+          .sort((a, b) => a.rank - b.rank || kindOrder[a.node.kind] - kindOrder[b.node.kind])
+          .map((entry) => entry.node);
+        resultsHeading.textContent = items.length
+          ? `${items.length} ${items.length === 1 ? "match" : "matches"}`
+          : `Nothing matches “${search.value.trim()}”`;
+      } else if (activeArea) {
+        items = [...activeArea.skills].sort((a, b) => b.uses - a.uses || a.label.localeCompare(b.label));
+        resultsHeading.textContent = `${activeArea.label} · ${items.length} skills`;
+      } else {
+        items = skillNodes
+          .filter((node) => node.uses > 0)
+          .sort((a, b) => b.uses - a.uses || a.label.localeCompare(b.label));
+        resultsHeading.textContent = "Most used skills";
+      }
+
+      resultItems = items;
+      activeResult = query && items.length ? 0 : -1;
+      results.replaceChildren(...items.map((node, index) => makeRow(node, index, { asOption: true })));
+      syncActiveResult();
+      constellation?.filter(query);
+    };
+
+    const syncActiveResult = () => {
+      results.querySelectorAll("[role='option']").forEach((option, index) => {
+        option.setAttribute("aria-selected", String(index === activeResult));
+      });
+      const active = results.querySelector(`#constellation-option-${activeResult}`);
+      if (active) {
+        search.setAttribute("aria-activedescendant", active.id);
+        active.scrollIntoView({ block: "nearest" });
+      } else {
+        search.removeAttribute("aria-activedescendant");
+      }
+    };
+
+    const setArea = (id) => {
+      const node = id ? graph.byId.get(id) : null;
+      activeArea = node && node !== activeArea ? node : null;
+      areaButtons.forEach((button) =>
+        button.setAttribute("aria-pressed", String(button.dataset.area === activeArea?.id))
+      );
+      search.value = "";
+      renderResults();
+      withMap((map) => map.focusArea(activeArea?.id ?? null));
+    };
+
+    // ---------- panel: detail ----------
+    const showDetail = (node) => {
+      if (!node) {
+        detail.hidden = true;
+        browse.hidden = false;
+        return;
+      }
+      detailKind.textContent = kindLabels[node.kind];
+      detailKind.className = `constellation-detail-kind is-${node.kind}`;
+      detailTitle.textContent = node.label;
+
+      let links;
+      if (node.kind === "skill") {
+        detailSub.textContent = node.uses
+          ? `Used in ${node.uses} ${node.uses === 1 ? "place" : "places"} · ${node.area.label}`
+          : `Part of my everyday toolkit · ${node.area.label}`;
+        links = [...node.neighbors].filter((neighbor) => neighbor.kind !== "category");
+        detailLinksHeading.textContent = links.length ? "Where I used it" : "";
+      } else if (node.kind === "category") {
+        detailSub.textContent = `${node.skills.length} skills in this area`;
+        links = [...node.skills].sort((a, b) => b.uses - a.uses);
+        detailLinksHeading.textContent = "Skills";
+      } else {
+        links = [...node.neighbors].sort((a, b) => a.label.localeCompare(b.label));
+        detailSub.textContent = `${links.length} ${links.length === 1 ? "skill" : "skills"} from this map`;
+        detailLinksHeading.textContent = "Skills used";
+      }
+
+      detailLinks.replaceChildren(...links.map((link, index) => makeRow(link, index, { asOption: false })));
+      detailJump.hidden = !node.target;
+      detailJump.dataset.target = node.target ?? "";
+      browse.hidden = true;
+      detail.hidden = false;
+    };
+
+    // ---------- panel events ----------
+    search.addEventListener("input", renderResults);
+    search.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        if (!resultItems.length) return;
+        const step = event.key === "ArrowDown" ? 1 : -1;
+        activeResult = (activeResult + step + resultItems.length) % resultItems.length;
+        syncActiveResult();
+        withMap((map) => map.preview(resultItems[activeResult].id));
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        const node = resultItems[Math.max(0, activeResult)];
+        if (node) withMap((map) => map.pick(node.id));
+      } else if (event.key === "Escape" && search.value) {
+        event.stopPropagation();
+        search.value = "";
+        renderResults();
+      }
+    });
+
+    areaButtons.forEach((button) => button.addEventListener("click", () => setArea(button.dataset.area)));
+
+    const rowFromEvent = (event) =>
+      event.target instanceof Element ? event.target.closest("[data-node-id]") : null;
+
+    [results, detailLinks].forEach((container) => {
+      container.addEventListener("click", (event) => {
+        const row = rowFromEvent(event);
+        if (row) withMap((map) => map.pick(row.dataset.nodeId));
+      });
+      container.addEventListener("pointerover", (event) => {
+        // Previews are a mouse affordance; a tap goes straight to pick.
+        if (event.pointerType !== "mouse") return;
+        const row = rowFromEvent(event);
+        if (row) constellation?.preview(row.dataset.nodeId);
+      });
+      container.addEventListener("pointerleave", () => constellation?.preview(null));
+    });
+
+    root.querySelector("[data-panel-back]").addEventListener("click", () => {
+      withMap((map) => map.pick(null));
+      showDetail(null);
+      search.focus({ preventScroll: true });
+    });
+
+    detailJump.addEventListener("click", () => {
+      if (detailJump.dataset.target) void revealTarget(detailJump.dataset.target);
+    });
+
+    root.querySelector("[data-map-zoom-in]").addEventListener("click", () => withMap((map) => map.zoomIn()));
+    root.querySelector("[data-map-zoom-out]").addEventListener("click", () => withMap((map) => map.zoomOut()));
+    root.querySelector("[data-map-reset]").addEventListener("click", () => {
+      activeArea = null;
+      areaButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
+      search.value = "";
+      renderResults();
+      showDetail(null);
+      withMap((map) => map.reset());
+    });
+
+    // ---------- loading ----------
+    const showStatus = (text, { error = false } = {}) => {
+      mapStatus.hidden = false;
+      statusText.textContent = text;
+      statusActions.hidden = !error;
+    };
+
+    const ensureConstellation = async () => {
+      if (constellation) return constellation;
+      if (!constellationLoading) {
+        showStatus("Charting the stars…");
+        constellationLoading = import("../scripts/constellation.js")
+          .then(({ createConstellation }) =>
+            createConstellation(stage, graph, {
+              reducedMotion,
+              onPick: showDetail,
+            })
+          )
+          .then((instance) => {
+            constellation = instance;
+            mapStatus.hidden = true;
+            instance.filter(search.value);
+            instance.setRunning(root.dataset.view === "constellation");
+            return instance;
+          })
+          .catch((error) => {
+            console.error("Skill map failed to start:", error);
+            // Forget the failed attempt so "Try again" really retries.
+            constellationLoading = null;
+            showStatus("The 3D map couldn't start in this browser.", { error: true });
+            return null;
+          });
+      }
+      return constellationLoading;
+    };
+
+    root.querySelector("[data-status-retry]").addEventListener("click", () => void ensureConstellation());
+    root.querySelector("[data-status-list]").addEventListener("click", () => setView("list"));
+
+    // ---------- switching views ----------
+    const viewStage = root.querySelector("[data-skills-stage]");
+    const thumb = root.querySelector("[data-views-thumb]");
+    const STAGE_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+    const EXIT_EASE = "cubic-bezier(0.23, 1, 0.32, 1)";
+    let finishSwitch = null;
+
+    // The thumb is one element that slides to the active button, so the
+    // gradient travels instead of blinking from one side to the other.
+    const moveThumb = () => {
+      const active = viewButtons.find((button) => button.getAttribute("aria-pressed") === "true");
+      if (!active || viewSwitch.hidden) return;
+      thumb.style.setProperty("--thumb-x", `${active.offsetLeft}px`);
+      thumb.style.setProperty("--thumb-w", `${active.offsetWidth}px`);
+    };
+
+    const applyView = (view) => {
+      root.dataset.view = view;
+      viewButtons.forEach((button) =>
+        button.setAttribute("aria-pressed", String(button.dataset.viewButton === view))
+      );
+      moveThumb();
+    };
+
+    const showOnly = (view) => {
+      const isConstellation = view === "constellation";
+      shell.hidden = !isConstellation;
+      list.hidden = isConstellation;
+      if (isConstellation) {
+        usage.hidden = true;
+        void ensureConstellation();
+        constellation?.setRunning(true);
+      } else {
+        constellation?.setRunning(false);
+      }
+    };
+
+    const setView = (view) => {
+      if (root.dataset.view === view && !finishSwitch) {
+        showOnly(view);
+        return;
+      }
+      // A second click mid-switch snaps the first one to its end state, then
+      // starts again from there.
+      finishSwitch?.();
+      const from = view === "constellation" ? list : shell;
+      const to = view === "constellation" ? shell : list;
+      applyView(view);
+
+      if (reducedMotion || from.hidden || !("animate" in viewStage)) {
+        showOnly(view);
+        return;
+      }
+
+      const startHeight = viewStage.offsetHeight;
+      // The outgoing view lifts out of the flow and fades on top, while the
+      // incoming one takes its place underneath.
+      from.classList.add("is-leaving");
+      showOnly(view);
+      from.hidden = false;
+      const endHeight = to.offsetHeight;
+      // Clip only while resizing, so the taller view can't spill over the next section.
+      viewStage.style.overflow = "clip";
+
+      const animations = [
+        viewStage.animate(
+          [{ height: `${startHeight}px` }, { height: `${endHeight}px` }],
+          { duration: 520, easing: STAGE_EASE }
+        ),
+        from.animate(
+          [
+            { opacity: 1, transform: "scale(1)", filter: "blur(0)" },
+            { opacity: 0, transform: "scale(0.985)", filter: "blur(4px)" },
+          ],
+          { duration: 220, easing: EXIT_EASE, fill: "forwards" }
+        ),
+        to.animate(
+          [
+            { opacity: 0, transform: "translateY(10px) scale(0.985)", filter: "blur(4px)" },
+            { opacity: 1, transform: "none", filter: "blur(0)" },
+          ],
+          { duration: 420, delay: 90, easing: EXIT_EASE, fill: "backwards" }
+        ),
+      ];
+
+      if (to === list) {
+        rows.forEach((row, index) => {
+          if (row.hidden) return;
+          animations.push(
+            row.animate(
+              [
+                { opacity: 0, transform: "translateY(12px)" },
+                { opacity: 1, transform: "none" },
+              ],
+              { duration: 380, delay: 120 + index * 45, easing: EXIT_EASE, fill: "backwards" }
+            )
+          );
+        });
+      }
+
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        finishSwitch = null;
+        animations.forEach((animation) => animation.cancel());
+        from.classList.remove("is-leaving");
+        from.hidden = true;
+        viewStage.style.removeProperty("overflow");
+      };
+      finishSwitch = finish;
+      animations[0].finished.then(finish, () => {});
+    };
+
+    window.addEventListener("resize", moveThumb);
+    document.fonts?.ready.then(moveThumb);
+
+    renderResults();
+
+    if (supportsWebGL) {
+      viewSwitch.hidden = false;
+      moveThumb();
+      // Place the thumb before enabling its transition, so it doesn't slide in on load.
+      requestAnimationFrame(() => requestAnimationFrame(() => viewSwitch.classList.add("is-ready")));
+      viewButtons.forEach((button) =>
+        button.addEventListener("click", () => setView(button.dataset.viewButton))
+      );
+
+      if (window.matchMedia("(min-width: 760px)").matches) {
+        applyView("constellation");
+        shell.hidden = false;
+        list.hidden = true;
+        // Don't pull three.js down until the section is about to be seen.
+        const warm = new IntersectionObserver(
+          ([entry]) => {
+            if (!entry.isIntersecting) return;
+            warm.disconnect();
+            if (root.dataset.view === "constellation") setView("constellation");
+          },
+          { rootMargin: "600px 0px" }
+        );
+        warm.observe(root);
+      }
+    }
+
+
+    // The command palette hands skills over by name.
+    document.addEventListener("skills:select", async (event) => {
+      const name = String(event.detail).toLowerCase();
+      if (root.dataset.view === "constellation") {
+        const node = skillNodes.find((candidate) => candidate.label.toLowerCase() === name);
+        if (node) {
+          await revealTarget(shell, { spotlight: false });
+          withMap((map) => map.pick(node.id));
+          return;
+        }
+      }
+      if (filter && filter.value) {
+        filter.value = "";
+        filter.dispatchEvent(new Event("input"));
+      }
+      if (chip.getAttribute("aria-pressed") !== "true") select(chip);
+      await revealTarget(chip.closest("[data-skills-row]") ?? chip, { spotlight: false });
+      chip.focus({ preventScroll: true });
+    });
+  }
+</script>

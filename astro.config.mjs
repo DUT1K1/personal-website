@@ -71,6 +71,13 @@ export default defineConfig({
       },
     }),
   ],
+  vite: {
+    // Pre-bundle three for the dev server, so the skill map's lazy import
+    // doesn't trigger a dependency re-optimization mid-session.
+    optimizeDeps: {
+      include: ["three", "three/examples/jsm/controls/OrbitControls.js"],
+    },
+  },
   markdown: {
     remarkPlugins: [remarkMath, remarkCodeFenceMath],
     rehypePlugins: [rehypeKatex],

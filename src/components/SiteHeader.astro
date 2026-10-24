@@ -21,6 +21,7 @@ const leaveBlog = isBlog ? true : undefined;
 ---
 
 <header class="site-header" transition:name="site-header">
+  {isHome ? <span class="scroll-progress" aria-hidden="true"></span> : null}
   <nav class="site-nav" aria-label={labels.nav}>
     <a class="site-brand" href={homeHref} aria-label={labels.home} data-astro-reload={leaveBlog}>
       <span class="site-brand-mark" aria-hidden="true" transition:name="site-brand-mark">DM</span>
@@ -50,6 +51,13 @@ const leaveBlog = isBlog ? true : undefined;
         aria-current={isBlog ? "page" : undefined}
       >{labels.writing}</a>
       <a href={sectionHref("contact")} class="nav-link nav-link-contact" data-astro-reload={leaveBlog}>{labels.contact}</a>
+      {isHome && !isGeorgian ? (
+        <button type="button" class="nav-cmdk" data-cmdk-open aria-label="Open quick navigation">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <span class="nav-cmdk-label">Search</span>
+          <span class="nav-cmdk-keys" aria-hidden="true"><kbd data-mod-key>⌘</kbd><kbd>K</kbd></span>
+        </button>
+      ) : null}
       {languageHref ? (
         <div class="lang-switch" data-active={locale}>
           <div class="lang-switch-track" role="group" aria-label={labels.language}>

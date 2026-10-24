@@ -1,0 +1,667 @@
+---
+// A tiny shell over the portfolio. `data` carries everything the virtual
+// filesystem is built from, so the terminal never drifts from the page.
+const { data } = Astro.props;
+---
+
+<dialog class="term" aria-label="Terminal" data-term>
+  <div class="term-window">
+    <div class="term-bar">
+      <span class="term-lights" aria-hidden="true">
+        <button type="button" class="term-light term-light-close" tabindex="-1" data-term-close></button>
+        <span class="term-light term-light-min"></span>
+        <span class="term-light term-light-max"></span>
+      </span>
+      <span class="term-title">davit@tbilisi: <span data-term-title-path>~</span></span>
+      <button type="button" class="term-exit" data-term-close aria-label="Close terminal">
+        <kbd>esc</kbd>
+      </button>
+    </div>
+    <div class="term-body" data-term-body>
+      <div class="term-output" role="log" aria-live="polite" data-term-output></div>
+      <form class="term-prompt" data-term-form autocomplete="off">
+        <label class="term-ps1" for="term-input" data-term-ps1></label>
+        <input
+          id="term-input"
+          class="term-input"
+          type="text"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          enterkeyhint="send"
+          aria-label="Terminal command"
+          data-term-input
+        />
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<script type="application/json" data-term-data set:html={JSON.stringify(data)}></script>
+
+<script>
+  import { copyText, revealTarget, showToast, waitForScrollEnd } from "../scripts/home-ui.js";
+
+  const dialog = document.querySelector("[data-term]");
+  const body = dialog?.querySelector("[data-term-body]");
+  const output = dialog?.querySelector("[data-term-output]");
+  const form = dialog?.querySelector("[data-term-form]");
+  const input = dialog?.querySelector("[data-term-input]");
+  const ps1 = dialog?.querySelector("[data-term-ps1]");
+  const titlePath = dialog?.querySelector("[data-term-title-path]");
+  const dataElement = document.querySelector("[data-term-data]");
+
+  if (dialog && body && output && form && input && ps1 && titlePath && dataElement) {
+    const data = JSON.parse(dataElement.textContent ?? "{}");
+    const HOME = "/home/davit";
+    let cwd = HOME;
+    let booted = false;
+    let history = [];
+    let historyIndex = 0;
+    let draft = "";
+    let returnFocus = null;
+
+    // ---------- virtual filesystem ----------
+    const slug = (value) =>
+      value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+    const file = (content, extra = {}) => ({ type: "file", content, ...extra });
+    const dir = (children) => ({ type: "dir", children });
+
+    const projectFiles = Object.fromEntries(
+      data.projects.map((project) => [
+        `${slug(project.title)}.md`,
+        file(
+          [
+            `# ${project.title}`,
+            `> ${project.kicker}`,
+            "",
+            project.description,
+            "",
+            project.details,
+            "",
+            `tags: ${project.highlights.join(", ")}`,
+            `link: ${project.href}`,
+          ].join("\n"),
+          { open: { type: "project", value: project.id } }
+        ),
+      ])
+    );
+
+    const experienceFiles = Object.fromEntries(
+      data.experiences.map((experience) => [
+        `${slug(experience.shortTitle)}.md`,
+        file(
+          [
+            `# ${experience.title}`,
+            `> ${experience.start} – ${experience.end ?? "present"}`,
+            "",
+            ...experience.paragraphs.flatMap((paragraph) => [paragraph, ""]),
+          ].join("\n").trimEnd() || `# ${experience.title}\n> ${experience.start} – present`,
+          { open: { type: "target", value: experience.id } }
+        ),
+      ])
+    );
+
+    const writingFiles = Object.fromEntries(
+      data.posts.map((post) => [
+        `${post.slug}.md`,
+        file(`# ${post.title}\n> ${post.date}\n\n${post.description}\n\nopen it to read the full post.`, {
+          open: { type: "link", value: post.href },
+        }),
+      ])
+    );
+
+    const skillsJson = JSON.stringify(
+      Object.fromEntries(data.skills.map((group) => [group.label, group.skills.map((skill) => skill.name)])),
+      null,
+      2
+    );
+
+    const root = dir({
+      home: dir({
+        davit: dir({
+          "about.md": file(`# About\n\n${data.about.join("\n\n")}`, { open: { type: "target", value: "about" } }),
+          "now.md": file(`# Now\n\n${data.now}`, { open: { type: "target", value: "now" } }),
+          "contact.txt": file(
+            `email     ${data.email}\ngithub    https://github.com/DUT1K1\nlinkedin  https://www.linkedin.com/in/david-maisuradze2004/\n\ntip: run \`email\` to copy the address.`,
+            { open: { type: "target", value: "contact" } }
+          ),
+          "skills.json": file(skillsJson, { open: { type: "target", value: "skills" } }),
+          "resume.pdf": file(null, { binary: true, open: { type: "download", value: data.resume } }),
+          projects: dir(projectFiles),
+          experience: dir(experienceFiles),
+          writing: dir(writingFiles),
+          ".secrets": file(
+            "nothing to see here.\n\n(but if you know your way around a 1986 controller, try it on the homepage.)\n↑ ↑ ↓ ↓ ← → ← → B A",
+            { hidden: true }
+          ),
+        }),
+      }),
+    });
+
+    const resolvePath = (path = "") => {
+      const expanded = path.startsWith("~") ? HOME + path.slice(1) : path;
+      const absolute = expanded.startsWith("/") ? expanded : `${cwd}/${expanded}`;
+      const parts = [];
+      for (const part of absolute.split("/")) {
+        if (!part || part === ".") continue;
+        if (part === "..") parts.pop();
+        else parts.push(part);
+      }
+      return `/${parts.join("/")}`;
+    };
+
+    const nodeAt = (absolute) => {
+      let node = root;
+      for (const part of absolute.split("/").filter(Boolean)) {
+        if (node?.type !== "dir") return null;
+        node = node.children[part];
+      }
+      return node ?? null;
+    };
+
+    const displayPath = (absolute) =>
+      absolute === HOME ? "~" : absolute.startsWith(`${HOME}/`) ? `~${absolute.slice(HOME.length)}` : absolute;
+
+    // ---------- output ----------
+    const scrollToEnd = () => {
+      body.scrollTop = body.scrollHeight;
+    };
+
+    const line = (content = "", className = "") => {
+      const element = document.createElement("div");
+      element.className = `term-line ${className}`.trim();
+      if (content instanceof Node) element.append(content);
+      else element.textContent = content;
+      output.append(element);
+      scrollToEnd();
+      return element;
+    };
+
+    const span = (text, className) => {
+      const element = document.createElement("span");
+      element.className = className;
+      element.textContent = text;
+      return element;
+    };
+
+    const fragment = (...parts) => {
+      const element = document.createDocumentFragment();
+      parts.forEach((part) => element.append(typeof part === "string" ? document.createTextNode(part) : part));
+      return element;
+    };
+
+    const printMarkdown = (text) => {
+      text.split("\n").forEach((row) => {
+        if (row.startsWith("# ")) line(row.slice(2), "term-h1");
+        else if (row.startsWith("> ")) line(row.slice(2), "term-dim");
+        else line(row);
+      });
+    };
+
+    const promptText = () => `davit@tbilisi:${displayPath(cwd)}$`;
+    const updatePrompt = () => {
+      ps1.textContent = promptText();
+      titlePath.textContent = displayPath(cwd);
+    };
+
+    const echoCommand = (command) => {
+      line(fragment(span(promptText(), "term-ps1-echo"), ` ${command}`));
+    };
+
+    // ---------- actions that leave the terminal ----------
+    const close = ({ restoreFocus = true } = {}) => {
+      if (!dialog.open) return;
+      dialog.close();
+      document.body.classList.remove("has-term");
+      if (restoreFocus && returnFocus instanceof HTMLElement) returnFocus.focus({ preventScroll: true });
+    };
+
+    const leaveAnd = async (action) => {
+      await new Promise((resolve) => window.setTimeout(resolve, 260));
+      close({ restoreFocus: false });
+      await action();
+    };
+
+    const runOpen = (open) => {
+      switch (open.type) {
+        case "project":
+          line(`opening ${open.value.replace(/^project-/, "")}…`, "term-dim");
+          return leaveAnd(async () => {
+            const card = await revealTarget(open.value, { spotlight: false });
+            await waitForScrollEnd();
+            card?.querySelector("[data-project-front]")?.click();
+          });
+        case "target":
+          line(`jumping to #${open.value}…`, "term-dim");
+          return leaveAnd(() => revealTarget(open.value));
+        case "link":
+          line(`navigating to ${open.value}…`, "term-dim");
+          return leaveAnd(async () => {
+            window.location.href = open.value;
+          });
+        case "download": {
+          const link = document.createElement("a");
+          link.href = open.value;
+          link.download = "";
+          link.click();
+          line("downloading resume.pdf…", "term-ok");
+          return undefined;
+        }
+        case "external":
+          window.open(open.value, "_blank", "noopener,noreferrer");
+          line(`opened ${open.value}`, "term-ok");
+          return undefined;
+        default:
+          return undefined;
+      }
+    };
+
+    // ---------- commands ----------
+    const sections = ["home", "about", "now", "skills", "experience", "projects", "education", "academic", "contact"];
+    const links = {
+      github: "https://github.com/DUT1K1",
+      linkedin: "https://www.linkedin.com/in/david-maisuradze2004/",
+      gakvetili: "https://gakvetili.ge/",
+      java: "https://opalescent-hub-1c1.notion.site/13fe260c066180d79b4dc85eb505f47f",
+    };
+
+    const commands = {
+      help: {
+        about: "list commands",
+        run: () => {
+          const rows = Object.entries(commands)
+            .filter(([, command]) => !command.hidden)
+            .map(([name, command]) => fragment(span(name.padEnd(12), "term-accent"), command.about));
+          line("available commands:", "term-dim");
+          rows.forEach((row) => line(row));
+          line("");
+          line("tab completes · ↑/↓ walks history · ctrl+l clears · esc closes", "term-dim");
+        },
+      },
+      ls: {
+        about: "list files (-a for hidden)",
+        run: (args) => {
+          const showHidden = args.includes("-a") || args.includes("-la");
+          const target = resolvePath(args.find((arg) => !arg.startsWith("-")) ?? ".");
+          const node = nodeAt(target);
+          if (!node) return line(`ls: ${args.at(-1)}: no such file or directory`, "term-err");
+          if (node.type === "file") return line(target.split("/").pop());
+          const entries = Object.entries(node.children).filter(([name, child]) => showHidden || !child.hidden);
+          const row = document.createDocumentFragment();
+          entries.forEach(([name, child]) => {
+            row.append(span(child.type === "dir" ? `${name}/` : name, child.type === "dir" ? "term-dir" : child.hidden ? "term-dim" : ""));
+            row.append("   ");
+          });
+          line(row, "term-wrap");
+        },
+      },
+      cd: {
+        about: "change directory",
+        run: (args) => {
+          const target = resolvePath(args[0] ?? "~");
+          const node = nodeAt(target);
+          if (!node) return line(`cd: ${args[0]}: no such file or directory`, "term-err");
+          if (node.type !== "dir") return line(`cd: ${args[0]}: not a directory`, "term-err");
+          cwd = target;
+          updatePrompt();
+        },
+      },
+      pwd: { about: "print working directory", run: () => line(cwd) },
+      cat: {
+        about: "print a file",
+        run: (args) => {
+          if (!args.length) return line("cat: missing file operand", "term-err");
+          args.forEach((arg) => {
+            const node = nodeAt(resolvePath(arg));
+            if (!node) return line(`cat: ${arg}: no such file or directory`, "term-err");
+            if (node.type === "dir") return line(`cat: ${arg}: is a directory`, "term-err");
+            if (node.binary) return line(`cat: ${arg}: binary file — try \`open ${arg}\``, "term-err");
+            printMarkdown(node.content);
+          });
+        },
+      },
+      open: {
+        about: "open a file, section, project or link",
+        run: (args) => {
+          const name = args[0];
+          if (!name) return line("usage: open <file | section | github | linkedin | gakvetili | java>", "term-err");
+          if (links[name]) return runOpen({ type: "external", value: links[name] });
+          if (sections.includes(name)) return runOpen({ type: "target", value: name });
+          const node = nodeAt(resolvePath(name));
+          if (node?.open) return runOpen(node.open);
+          // Let `open gym` find projects/gym-management-application.md.
+          const project = data.projects.find((candidate) => slug(candidate.title).includes(slug(name)));
+          if (project) return runOpen({ type: "project", value: project.id });
+          line(`open: ${name}: nothing to open`, "term-err");
+        },
+      },
+      tree: {
+        about: "show the filesystem",
+        run: () => {
+          const walk = (node, prefix) => {
+            const entries = Object.entries(node.children).filter(([, child]) => !child.hidden);
+            entries.forEach(([name, child], index) => {
+              const last = index === entries.length - 1;
+              line(
+                fragment(
+                  span(`${prefix}${last ? "└── " : "├── "}`, "term-dim"),
+                  span(child.type === "dir" ? `${name}/` : name, child.type === "dir" ? "term-dir" : "")
+                )
+              );
+              if (child.type === "dir") walk(child, `${prefix}${last ? "    " : "│   "}`);
+            });
+          };
+          line(displayPath(cwd), "term-dir");
+          walk(nodeAt(cwd), "");
+        },
+      },
+      whoami: {
+        about: "who is this",
+        run: () => line("davit — software developer, tech lead, educator. based in tbilisi, georgia."),
+      },
+      neofetch: { about: "system info, but it's me", run: () => neofetch() },
+      skills: {
+        about: "list skills (--grep <text>)",
+        run: (args) => {
+          const grepIndex = args.indexOf("--grep");
+          const query = (grepIndex >= 0 ? args[grepIndex + 1] : args[0])?.toLowerCase();
+          let count = 0;
+          data.skills.forEach((group) => {
+            const matches = group.skills.filter((skill) => !query || skill.name.toLowerCase().includes(query));
+            if (!matches.length) return;
+            line(group.label.toLowerCase(), "term-h2");
+            matches.forEach((skill) => {
+              count += 1;
+              line(
+                fragment(
+                  "  ",
+                  span(skill.name.padEnd(20), "term-accent"),
+                  span(skill.usedIn.length ? skill.usedIn.map((id) => data.places[id]?.label ?? id).join(", ") : "toolkit", "term-dim")
+                )
+              );
+            });
+          });
+          if (!count) line(`no skills match "${query}"`, "term-err");
+          else if (query) line(`\n${count} match${count === 1 ? "" : "es"}. try \`open skills.json\` to see them on the page.`, "term-dim");
+        },
+      },
+      goto: {
+        about: "scroll the page to a section",
+        run: (args) => {
+          if (!sections.includes(args[0])) {
+            return line(`usage: goto <${sections.join(" | ")}>`, "term-err");
+          }
+          return runOpen({ type: "target", value: args[0] });
+        },
+      },
+      email: {
+        about: "copy my email address",
+        run: async () => {
+          const copied = await copyText(data.email);
+          line(copied ? `copied ${data.email} to your clipboard ✓` : data.email, copied ? "term-ok" : "");
+        },
+      },
+      resume: { about: "download my résumé", run: () => runOpen({ type: "download", value: data.resume }) },
+      date: {
+        about: "time in tbilisi",
+        run: () =>
+          line(
+            new Intl.DateTimeFormat("en-GB", {
+              dateStyle: "full",
+              timeStyle: "medium",
+              timeZone: "Asia/Tbilisi",
+            }).format(new Date()) + " (Asia/Tbilisi)"
+          ),
+      },
+      echo: { about: "print text", run: (args) => line(args.join(" ")) },
+      history: {
+        about: "previous commands",
+        run: () => history.forEach((entry, index) => line(fragment(span(String(index + 1).padStart(4), "term-dim"), `  ${entry}`))),
+      },
+      clear: { about: "clear the screen", run: () => output.replaceChildren() },
+      exit: { about: "close the terminal", run: () => leaveAnd(async () => {}) },
+      sudo: {
+        hidden: true,
+        run: () => line("davit is not in the sudoers file. This incident will be reported.", "term-err"),
+      },
+      rm: {
+        hidden: true,
+        run: (args) =>
+          args.join(" ").includes("-rf")
+            ? line("nice try. this portfolio is load-bearing.", "term-err")
+            : line("rm: permission denied", "term-err"),
+      },
+      vim: { hidden: true, run: () => line("you are now trapped forever. (kidding — type `exit`.)", "term-dim") },
+      supra: {
+        hidden: true,
+        run: () => {
+          line("გაუმარჯოს! 🍷  raising a toast…", "term-ok");
+          return leaveAnd(async () => {
+            document.dispatchEvent(new CustomEvent("easter:supra"));
+          });
+        },
+      },
+    };
+    commands.ll = { hidden: true, run: () => commands.ls.run(["-a"]) };
+    commands.quit = { hidden: true, run: commands.exit.run };
+    commands.man = { hidden: true, run: () => commands.help.run([]) };
+
+    const neofetch = () => {
+      const art = [
+        "█████▄   ██▄     ▄██",
+        "██   ██  ███▄   ▄███",
+        "██   ██  ██ ▀█▄█▀ ██",
+        "██   ██  ██   ▀   ██",
+        "██   ██  ██       ██",
+        "█████▀   ██       ██",
+      ];
+      const time = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Tbilisi",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date());
+      const info = [
+        ["", "davit@tbilisi"],
+        ["", "─────────────"],
+        ["role", "CTO & Tech Lead · Python Developer"],
+        ["stack", "Java · Spring Boot · Python · AWS"],
+        ["teaching", "Java @ MZIURI since 2023"],
+        ["projects", `${data.projects.length} shipped`],
+        ["writing", `${data.posts.length} post${data.posts.length === 1 ? "" : "s"}`],
+        ["local time", `${time} (UTC+4)`],
+        ["shell", "portfolio-sh 1.0"],
+      ];
+
+      const block = document.createElement("div");
+      block.className = "term-neofetch";
+      const artElement = document.createElement("pre");
+      artElement.className = "term-art";
+      artElement.setAttribute("aria-hidden", "true");
+      artElement.textContent = art.join("\n");
+      const infoElement = document.createElement("div");
+      info.forEach(([key, value], index) => {
+        const row = document.createElement("div");
+        if (index === 0) row.append(span(value, "term-accent term-strong"));
+        else if (!key) row.append(span(value, "term-dim"));
+        else row.append(span(`${key}: `, "term-accent"), value);
+        infoElement.append(row);
+      });
+      const swatches = document.createElement("div");
+      swatches.className = "term-swatches";
+      swatches.setAttribute("aria-hidden", "true");
+      ["#ff8660", "#9a33ff", "#5badff", "#3bd6a6", "#f4a3cb", "#c9c5c1"].forEach((color) => {
+        const swatch = document.createElement("span");
+        swatch.style.background = color;
+        swatches.append(swatch);
+      });
+      infoElement.append(swatches);
+      block.append(artElement, infoElement);
+      line(block);
+    };
+
+    // ---------- input handling ----------
+    const tokenize = (raw) => raw.match(/"[^"]*"|'[^']*'|\S+/g)?.map((token) => token.replace(/^["']|["']$/g, "")) ?? [];
+
+    const execute = async (raw) => {
+      const trimmed = raw.trim();
+      echoCommand(raw);
+      if (!trimmed) return;
+
+      history.push(trimmed);
+      historyIndex = history.length;
+      const [name, ...args] = tokenize(trimmed);
+      const command = commands[name.toLowerCase()];
+
+      if (!command) {
+        const guess = Object.keys(commands).find((candidate) => !commands[candidate].hidden && candidate.startsWith(name.slice(0, 2)));
+        line(`portfolio-sh: command not found: ${name}${guess ? ` — did you mean \`${guess}\`?` : ""}`, "term-err");
+        return;
+      }
+      await command.run(args);
+    };
+
+    const complete = () => {
+      const value = input.value;
+      const tokens = value.split(/\s+/);
+      const isCommand = tokens.length <= 1;
+      const current = tokens.at(-1) ?? "";
+      let candidates;
+      let base = "";
+      let partial = current;
+
+      if (isCommand) {
+        candidates = Object.keys(commands).filter((name) => !commands[name].hidden);
+      } else {
+        const slash = current.lastIndexOf("/");
+        base = slash >= 0 ? current.slice(0, slash + 1) : "";
+        partial = slash >= 0 ? current.slice(slash + 1) : current;
+        const node = nodeAt(resolvePath(base || "."));
+        candidates = node?.type === "dir"
+          ? Object.entries(node.children)
+              .filter(([name, child]) => !child.hidden || partial.startsWith("."))
+              .map(([name, child]) => (child.type === "dir" ? `${name}/` : name))
+          : [];
+        if (["open", "goto"].includes(tokens[0])) {
+          candidates.push(...sections, ...(tokens[0] === "open" ? Object.keys(links) : []));
+        }
+      }
+
+      const matches = [...new Set(candidates)].filter((candidate) => candidate.startsWith(partial));
+      if (matches.length === 1) {
+        tokens[tokens.length - 1] = base + matches[0];
+        input.value = tokens.join(" ") + (matches[0].endsWith("/") ? "" : " ");
+      } else if (matches.length > 1) {
+        let prefix = matches[0];
+        matches.forEach((match) => {
+          while (!match.startsWith(prefix)) prefix = prefix.slice(0, -1);
+        });
+        if (prefix.length > partial.length) {
+          tokens[tokens.length - 1] = base + prefix;
+          input.value = tokens.join(" ");
+        } else {
+          echoCommand(value);
+          line(matches.join("   "), "term-dim term-wrap");
+        }
+      }
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const value = input.value;
+      input.value = "";
+      draft = "";
+      await execute(value);
+      scrollToEnd();
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Tab") {
+        event.preventDefault();
+        complete();
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (historyIndex === history.length) draft = input.value;
+        historyIndex = Math.max(0, historyIndex - 1);
+        input.value = history[historyIndex] ?? input.value;
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        historyIndex = Math.min(history.length, historyIndex + 1);
+        input.value = historyIndex === history.length ? draft : history[historyIndex];
+      } else if (event.ctrlKey && event.key.toLowerCase() === "l") {
+        event.preventDefault();
+        output.replaceChildren();
+      } else if (event.ctrlKey && event.key.toLowerCase() === "c") {
+        event.preventDefault();
+        echoCommand(`${input.value}^C`);
+        input.value = "";
+      }
+    });
+
+    body.addEventListener("click", () => {
+      if (!window.getSelection()?.toString()) input.focus({ preventScroll: true });
+    });
+
+    // ---------- open / close ----------
+    const boot = () => {
+      booted = true;
+      line(fragment(span("portfolio-sh", "term-accent term-strong"), " 1.0 — welcome to davit's corner of the internet."));
+      line("type `help` to look around, or try `neofetch`.", "term-dim");
+      line("");
+    };
+
+    const open = () => {
+      if (dialog.open) return;
+      document.querySelector("[data-cmdk][open]")?.close();
+      returnFocus = document.activeElement;
+      updatePrompt();
+      if (!booted) boot();
+      dialog.showModal();
+      document.body.classList.add("has-term");
+      input.focus();
+      scrollToEnd();
+    };
+
+    dialog.querySelectorAll("[data-term-close]").forEach((button) => {
+      button.addEventListener("click", () => close());
+    });
+
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      close();
+    });
+
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) close();
+    });
+
+    const isTyping = (target) =>
+      target instanceof HTMLElement &&
+      (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "`" || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (dialog.open) {
+        if (event.target === input && input.value) return;
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (isTyping(event.target) || document.querySelector("dialog[open]")) return;
+      event.preventDefault();
+      open();
+    });
+
+    document.addEventListener("click", (event) => {
+      const trigger = event.target instanceof Element && event.target.closest("[data-term-open]");
+      if (!trigger) return;
+      event.preventDefault();
+      const menuToggle = document.querySelector(".menu-toggle[aria-expanded='true']");
+      if (menuToggle instanceof HTMLElement) menuToggle.click();
+      open();
+    });
+
+    document.addEventListener("terminal:open", open);
+  }
+</script>
