@@ -16,6 +16,7 @@ draft: false
 ---
 
 import CallStackGallery from "../../components/CallStackGallery.astro";
+import CallStackScene from "../../components/CallStackScene.astro";
 import BlogCallout from "../../components/BlogCallout.astro";
 
 A few days ago, I was attending a conference in Batumi, Georgia, where I spoke with [Furio Honsell](https://dblp.org/pid/19/6791.html). Furio is one of the smartest people I've met, and I was lucky enough to have him supervise my bachelor's thesis.
@@ -37,6 +38,8 @@ The chain looks a lot like a program's call stack. Each character has a task the
 The same thing happens when one function calls another. The current function pauses, and the new call adds a frame to the stack. This continues until the final function has something to return. The stack then unwinds in reverse order. Each function finishes its work and hands control back to the function that called it.
 
 <CallStackGallery />
+
+<CallStackScene />
 
 ## Why the order matters
 
